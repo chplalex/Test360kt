@@ -1,19 +1,23 @@
-package com.chplalex.Test360kt
+package com.chplalex.test360kt.cameras
 
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.Insets
+import android.graphics.Rect
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.util.Size
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowInsets
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_cameras.*
+import com.chplalex.test360kt.R
+import com.chplalex.test360kt.utils.TAG
 
 private const val CAMERA_REQUEST = 4747
 
@@ -67,6 +71,28 @@ class CamerasFragment : Fragment() {
         }
 
         it.findViewById<ImageButton>(R.id.imgCameraPSDK)?.setOnClickListener {
+            val metrics = activity?.windowManager?.maximumWindowMetrics
+            if (metrics != null) {
+                val bounds: Rect = metrics.bounds
+                val windowInsets = metrics.windowInsets
+
+                var insetsWidth: Int = 0
+                var insetsHeight: Int = 0
+
+                val insets: Insets? = windowInsets?.getInsetsIgnoringVisibility(
+                    WindowInsets.Type.navigationBars() or WindowInsets.Type.displayCutout()
+                )
+
+                insets?.let {
+                    insetsWidth = it.right + it.left
+                    insetsHeight = it.top + it.bottom
+                }
+                // Legacy size that Display#getSize reports
+                val legacySize = Size(bounds.width() - insetsWidth, bounds.height() - insetsHeight)
+
+                Log.d(TAG, "mWidth = $legacySize.width")
+                Log.d(TAG, "mHeight = $legacySize.height")
+            }
             ShooterActivity.start(it.context)
         }
 

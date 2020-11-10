@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.chplalex.Test360kt">
+    package="com.chplalex.test360kt">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <!--
@@ -19,7 +19,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Test360kt">
-        <activity android:name=".MainActivity">
+        <activity android:name="com.chplalex.test360kt.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -27,15 +27,15 @@
         </activity>
 
         <activity
-            android:name=".ImageActivity"
+            android:name="com.chplalex.test360kt.cameras.ImageActivity"
             android:label="@string/title_activity_image"
             android:theme="@style/Theme.Test360kt.NoActionBar"/>
 
-        <activity android:name=".PanoramaActivity"
+        <activity android:name="com.chplalex.test360kt.internet.PanoramaActivity"
             android:label="@string/title_activity_panorama"
             android:theme="@style/Theme.Test360kt.NoActionBar"/>
 
-        <activity android:name=".ShooterActivity"
+        <activity android:name="com.chplalex.test360kt.cameras.ShooterActivity"
             android:label="@string/title_activity_shooter"
             android:theme="@style/Theme.Test360kt.NoActionBar"/>
 

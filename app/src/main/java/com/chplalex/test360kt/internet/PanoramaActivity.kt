@@ -1,4 +1,4 @@
-package com.chplalex.Test360kt
+package com.chplalex.test360kt.internet
 
 import android.content.Context
 import android.content.Intent
@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.chplalex.test360kt.R
 import com.google.vr.sdk.widgets.pano.VrPanoramaView
 import com.google.vr.sdk.widgets.pano.VrPanoramaView.Options.TYPE_MONO
 import kotlinx.android.synthetic.main.activity_panorama.*

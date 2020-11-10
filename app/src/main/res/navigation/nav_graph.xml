@@ -6,26 +6,26 @@
     app:startDestination="@id/camerasFragment">
     <activity
         android:id="@+id/mainActivity"
-        android:name="com.chplalex.Test360kt.MainActivity"
+        android:name="com.chplalex.test360kt.main.MainActivity"
         tools:layout="@layout/fragment_internet_gallery" />
     <fragment
         android:id="@+id/camerasFragment"
-        android:name="com.chplalex.Test360kt.CamerasFragment"
+        android:name="com.chplalex.test360kt.cameras.CamerasFragment"
         android:label="CamerasFragment"
         tools:layout="@layout/fragment_cameras"/>
     <fragment
         android:id="@+id/internetGalleryFragment"
-        android:name="com.chplalex.Test360kt.InternetGalleryFragment"
+        android:name="com.chplalex.test360kt.internet.InternetGalleryFragment"
         android:label="InternetGalleryFragment"
         tools:layout="@layout/fragment_internet_gallery"/>
     <activity
         android:id="@+id/imageActivity"
-        android:name="com.chplalex.Test360kt.ImageActivity"
+        android:name="com.chplalex.test360kt.cameras.ImageActivity"
         android:label="ImageActivity"
         tools:layout="@layout/activity_image"/>
     <activity
         android:id="@+id/panoramaActivity"
-        android:name="com.chplalex.Test360kt.PanoramaActivity"
+        android:name="com.chplalex.test360kt.internet.PanoramaActivity"
         android:label="PanoramaActivity"
         tools:layout="@layout/activity_panorama"/>
 </navigation>

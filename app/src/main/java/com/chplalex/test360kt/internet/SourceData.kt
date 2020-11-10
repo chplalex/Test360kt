@@ -1,4 +1,4 @@
-package com.chplalex.Test360kt
+package com.chplalex.test360kt.internet
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize

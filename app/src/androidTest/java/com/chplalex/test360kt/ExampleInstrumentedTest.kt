@@ -1,4 +1,4 @@
-package com.chplalex.Test360kt
+package com.chplalex.test360kt
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
