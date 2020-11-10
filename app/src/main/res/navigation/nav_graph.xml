@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/camerasFragment">
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="com.chplalex.Test360kt.MainActivity"
+        tools:layout="@layout/fragment_internet_gallery" />
+    <fragment
+        android:id="@+id/camerasFragment"
+        android:name="com.chplalex.Test360kt.CamerasFragment"
+        android:label="CamerasFragment"
+        tools:layout="@layout/fragment_cameras"/>
+    <fragment
+        android:id="@+id/internetGalleryFragment"
+        android:name="com.chplalex.Test360kt.InternetGalleryFragment"
+        android:label="InternetGalleryFragment"
+        tools:layout="@layout/fragment_internet_gallery"/>
+    <activity
+        android:id="@+id/imageActivity"
+        android:name="com.chplalex.Test360kt.ImageActivity"
+        android:label="ImageActivity"
+        tools:layout="@layout/activity_image"/>
+    <activity
+        android:id="@+id/panoramaActivity"
+        android:name="com.chplalex.Test360kt.PanoramaActivity"
+        android:label="PanoramaActivity"
+        tools:layout="@layout/activity_panorama"/>
+</navigation>

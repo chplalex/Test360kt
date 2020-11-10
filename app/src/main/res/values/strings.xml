@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Test360kt</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+    <string name="nav_header_title" translatable="false">CHPL Studio</string>
+    <string name="nav_header_subtitle" translatable="false">chepel.alexander@gmail.com</string>
+    <string name="nav_header_desc" translatable="false">Navigation header</string>
+    <string name="title_activity_image" translatable="false">Activity Image</string>
+    <string name="title_activity_panorama" translatable="false">Activity Panorama</string>
+    <string name="title_activity_shooter">Activity PSDK Shooter</string>
+    <string name="label_cameras">Камеры</string>
+    <string name="label_gallery">Галерея из интернета</string>
+    <string name="text_camera_simple">вызов внешней камеры\nв "ПРОСТОМ" режиме\nACTION_IMAGE_CAPTURE</string>
+    <string name="text_camera_full">вызов внешней камеры\nв "ПОЛНОМ" режиме\nINTENT_ACTION_STILL_IMAGE_CAMERA</string>
+    <string name="text_camera_panorama_sdk">вызов камеры\nPANORAMA SDK</string>
+</resources>

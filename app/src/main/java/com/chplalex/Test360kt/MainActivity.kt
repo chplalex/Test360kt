@@ -1,0 +1,40 @@
+package com.chplalex.Test360kt
+
+import android.os.Bundle
+import android.util.Log
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.Navigation
+import androidx.navigation.ui.NavigationUI
+import kotlinx.android.synthetic.main.activity_main.*
+
+class MainActivity : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        Log.d("KKK", "toolbar = $toolbar")
+
+        toolbar?.let{
+            setSupportActionBar(it)
+            it.title = "KKK"
+        }
+
+        val navController = Navigation.findNavController(this, R.id.navHostFragment)
+
+        NavigationUI.setupWithNavController(navigationView, navController)
+
+        val toggle = ActionBarDrawerToggle(
+            this,
+            drawerLayout,
+            toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
+        drawerLayout.addDrawerListener(toggle)
+        toggle.isDrawerIndicatorEnabled = true
+        toggle.syncState()
+    }
+
+}

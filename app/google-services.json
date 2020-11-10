@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "289362934014",
+    "firebase_url": "https://test360kt.firebaseio.com",
+    "project_id": "test360kt",
+    "storage_bucket": "test360kt.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:289362934014:android:2d20bf122e43e7e2784daf",
+        "android_client_info": {
+          "package_name": "com.chplalex.Test360kt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "289362934014-m92rt603tusbqnlgvm4jcsbgpqq9flr6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAj4q3OV2sDav1WPFRwjqEleSGcxQfcLs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "289362934014-m92rt603tusbqnlgvm4jcsbgpqq9flr6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
