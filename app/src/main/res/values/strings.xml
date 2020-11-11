@@ -13,4 +13,14 @@
     <string name="text_camera_simple">вызов внешней камеры\nв "ПРОСТОМ" режиме\nACTION_IMAGE_CAPTURE</string>
     <string name="text_camera_full">вызов внешней камеры\nв "ПОЛНОМ" режиме\nINTENT_ACTION_STILL_IMAGE_CAMERA</string>
     <string name="text_camera_panorama_sdk">вызов камеры\nPANORAMA SDK</string>
+
+    <string name="hold_the_device_vertically">Hold your device vertically</string>
+    <string name="rotate_left_or_right_or_tap_to_restart">Rotate left or right or tap to restart</string>
+    <string name="tap_to_finish_when_ready_or_continue_rotating">Tap to finish when ready or continue rotating</string>
+    <string name="tap_anywhere_to_start">Tap anywhere to start</string>
+    <string name="permission_title">Недостаточно прав</string>
+    <string name="permission_message">Вы готовы предоставить необходимые права для работы приложения?</string>
+    <string name="btn_ok">Да</string>
+    <string name="btn_cancel">Нет</string>
+
 </resources>

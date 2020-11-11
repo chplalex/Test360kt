@@ -71,28 +71,6 @@ class CamerasFragment : Fragment() {
         }
 
         it.findViewById<ImageButton>(R.id.imgCameraPSDK)?.setOnClickListener {
-            val metrics = activity?.windowManager?.maximumWindowMetrics
-            if (metrics != null) {
-                val bounds: Rect = metrics.bounds
-                val windowInsets = metrics.windowInsets
-
-                var insetsWidth: Int = 0
-                var insetsHeight: Int = 0
-
-                val insets: Insets? = windowInsets?.getInsetsIgnoringVisibility(
-                    WindowInsets.Type.navigationBars() or WindowInsets.Type.displayCutout()
-                )
-
-                insets?.let {
-                    insetsWidth = it.right + it.left
-                    insetsHeight = it.top + it.bottom
-                }
-                // Legacy size that Display#getSize reports
-                val legacySize = Size(bounds.width() - insetsWidth, bounds.height() - insetsHeight)
-
-                Log.d(TAG, "mWidth = $legacySize.width")
-                Log.d(TAG, "mHeight = $legacySize.height")
-            }
             ShooterActivity.start(it.context)
         }
 
