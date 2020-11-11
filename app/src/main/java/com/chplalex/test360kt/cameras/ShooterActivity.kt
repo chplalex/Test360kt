@@ -7,6 +7,8 @@ import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Build
+import android.os.Build.VERSION.SDK_INT
+import android.os.Build.VERSION_CODES.M
 import android.os.Bundle
 import android.os.Environment
 import android.util.DisplayMetrics
@@ -17,6 +19,7 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.Window
 import android.view.WindowManager
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.chplalex.test360kt.R
 import com.chplalex.test360kt.utils.TAG
@@ -103,33 +106,20 @@ class ShooterActivity : AppCompatActivity() {
     // Проверяем наличие необходимых разрешений
     // TODO проверить, всё ли из этого нам действительно необходимо
     private fun checkPermissions() {
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M) return
+        if (SDK_INT < M) return
 
-        if (checkSelfPermission(CAMERA) != PERMISSION_GRANTED) {
-            requestPermissions(
-                arrayOf(CAMERA),
-                MY_PERMISSIONS_REQUEST_CAMERA
-            )
+        if (!checkPermissionsCamera()) {
+            requestPermissionsCamera()
             return
         }
 
-        if ((checkSelfPermission(READ_EXTERNAL_STORAGE) != PERMISSION_GRANTED) ||
-            (checkSelfPermission(WRITE_EXTERNAL_STORAGE) != PERMISSION_GRANTED)
-        ) {
-            requestPermissions(
-                arrayOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE),
-                MY_PERMISSIONS_REQUEST_STORAGE
-            )
+        if (!checkPermissionsStorage()) {
+            requestPermissionsStorage()
             return
         }
 
-        if ((checkSelfPermission(ACCESS_FINE_LOCATION) != PERMISSION_GRANTED) ||
-            (checkSelfPermission(ACCESS_COARSE_LOCATION) != PERMISSION_GRANTED)
-        ) {
-            requestPermissions(
-                arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
-                MY_PERMISSIONS_REQUEST_LOCATION
-            )
+        if (!checkPermissionsLocation()) {
+            requestPermissionsLocation()
             return
         }
     }
@@ -143,92 +133,104 @@ class ShooterActivity : AppCompatActivity() {
 
         Log.d(TAG, "onRequestPermissionsResult main")
 
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) return
+        if (SDK_INT < M) return
 
         when (requestCode) {
             MY_PERMISSIONS_REQUEST_CAMERA -> {
                 Log.d(TAG, "MY_PERMISSIONS_REQUEST_CAMERA")
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.size > 0 && grantResults[0] == PERMISSION_GRANTED) {
-                    if (checkSelfPermission(READ_EXTERNAL_STORAGE) !== PERMISSION_GRANTED ||
-                        checkSelfPermission(WRITE_EXTERNAL_STORAGE) !== PERMISSION_GRANTED) {
-                        requestPermissions(arrayOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE),
-                            MY_PERMISSIONS_REQUEST_STORAGE)
-                        return
-                    } else if (checkSelfPermission(ACCESS_FINE_LOCATION) !== PERMISSION_GRANTED ||
-                        checkSelfPermission(ACCESS_COARSE_LOCATION) !== PERMISSION_GRANTED) {
-                        requestPermissions(arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
-                            MY_PERMISSIONS_REQUEST_LOCATION)
-                        return
-                    }
-                } else {
-                    toastMessage("Camera, Storage and Location permissions are not optional!")
+                if (!checkPermissionsCamera()) {
+                    toastMessage("Camera permissions are not optional!")
                     finish()
+                    return
+                }
+                if (!checkPermissionsStorage()) {
+                    requestPermissionsStorage()
+                    return
+                }
+                if (!checkPermissionsLocation()) {
+                    requestPermissionsLocation()
+                    return
                 }
                 return
             }
             MY_PERMISSIONS_REQUEST_STORAGE -> {
-                run {
-                    Log.d(TAG, "MY_PERMISSIONS_REQUEST_STORAGE")
-                    if (grantResults.size > 1 && grantResults[0] == PERMISSION_GRANTED && grantResults[1] == PERMISSION_GRANTED) {
-                        if (checkSelfPermission(CAMERA) === PERMISSION_GRANTED) {
-                            if (checkSelfPermission(ACCESS_FINE_LOCATION) !== PERMISSION_GRANTED ||
-                                checkSelfPermission(ACCESS_COARSE_LOCATION) !== PERMISSION_GRANTED) {
-                                requestPermissions(arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
-                                    MY_PERMISSIONS_REQUEST_LOCATION)
-                                return
-                            }
-                        } else {
-                            toastMessage("Camera, Storage and Location permissions are not optional!")
-                            finish()
-                            return
-                        }
-                    } else {
-                        toastMessage("Camera, Storage and Location permissions are not optional!")
-                        finish()
-                        return
-                    }
+                Log.d(TAG, "MY_PERMISSIONS_REQUEST_STORAGE")
+                if (!checkPermissionsCamera()) {
+                    toastMessage("Camera permissions are not optional!")
+                    finish()
+                    return
                 }
-                run {
-                    Log.d(TAG, "MY_PERMISSIONS_REQUEST_LOCATION")
-                    if (grantResults.size > 1 && grantResults[0] == PERMISSION_GRANTED && grantResults[1] == PERMISSION_GRANTED) {
-                        if (checkSelfPermission(CAMERA) !== PERMISSION_GRANTED) {
-                            toastMessage("Camera, Storage and Location permissions are not optional!")
-                            finish()
-                            return
-                        } else if (checkSelfPermission(READ_EXTERNAL_STORAGE) !== PERMISSION_GRANTED ||
-                            checkSelfPermission(WRITE_EXTERNAL_STORAGE) !== PERMISSION_GRANTED) {
-                            toastMessage("Camera, Storage and Location permissions are not optional!")
-                            finish()
-                            return
-                        }
-                    } else {
-                        toastMessage("Camera, Storage and Location permissions are not optional!")
-                        finish()
-                        return
-                    }
+                if (!checkPermissionsStorage()) {
+                    toastMessage("Storage permissions are not optional!")
+                    finish()
+                    return
                 }
+                if (!checkPermissionsLocation()) {
+                    requestPermissionsLocation()
+                    return
+                }
+                return
             }
             MY_PERMISSIONS_REQUEST_LOCATION -> {
-                Log.e("rmh", "MY_PERMISSIONS_REQUEST_LOCATION")
-                if (grantResults.size > 1 && grantResults[0] == PERMISSION_GRANTED && grantResults[1] == PERMISSION_GRANTED) {
-                    if (checkSelfPermission(CAMERA) !== PERMISSION_GRANTED) {
-                        toastMessage("Camera, Storage and Location permissions are not optional!")
-                        finish()
-                        return
-                    } else if (checkSelfPermission(READ_EXTERNAL_STORAGE) !== PERMISSION_GRANTED ||
-                        checkSelfPermission(WRITE_EXTERNAL_STORAGE) !== PERMISSION_GRANTED) {
-                        toastMessage("Camera, Storage and Location permissions are not optional!")
-                        finish()
-                        return
-                    }
-                } else {
-                    toastMessage("Camera, Storage and Location permissions are not optional!")
+                Log.d(TAG, "MY_PERMISSIONS_REQUEST_LOCATION")
+                if (!checkPermissionsCamera()) {
+                    toastMessage("Camera permissions are not optional!")
+                    finish()
+                    return
+                }
+                if (!checkPermissionsStorage()) {
+                    toastMessage("Storage permissions are not optional!")
+                    finish()
+                    return
+                }
+                if (!checkPermissionsLocation()) {
+                    toastMessage("Location permissions are not optional!")
                     finish()
                     return
                 }
             }
         }
+    }
+
+    @RequiresApi(M)
+    private fun checkPermissionsCamera() =
+        (checkSelfPermission(CAMERA) == PERMISSION_GRANTED)
+
+    @RequiresApi(M)
+    private fun checkPermissionsStorage() =
+        (checkSelfPermission(READ_EXTERNAL_STORAGE) == PERMISSION_GRANTED) &&
+                (checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PERMISSION_GRANTED)
+
+    @RequiresApi(M)
+    private fun checkPermissionsLocation() =
+        (checkSelfPermission(READ_EXTERNAL_STORAGE) == PERMISSION_GRANTED &&
+                checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PERMISSION_GRANTED)
+
+    @RequiresApi(M)
+    private fun requestPermissionsCamera() = requestPermissions(
+        arrayOf(CAMERA),
+        MY_PERMISSIONS_REQUEST_CAMERA
+    )
+
+    @RequiresApi(M)
+    private fun requestPermissionsStorage() = requestPermissions(
+        arrayOf(READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE),
+        MY_PERMISSIONS_REQUEST_STORAGE
+    )
+
+    @RequiresApi(M)
+    private fun requestPermissionsLocation() = requestPermissions(
+        arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
+        MY_PERMISSIONS_REQUEST_LOCATION
+    )
+
+    private fun grantResultsOk(grantResults: IntArray, paramCount: Int): Boolean {
+        var result = false
+        for (r in grantResults) {
+            result = result && (r == PERMISSION_GRANTED)
+        }
+        return result && (grantResults.size == paramCount)
     }
 
     private fun toastMessage(msg: String) {
