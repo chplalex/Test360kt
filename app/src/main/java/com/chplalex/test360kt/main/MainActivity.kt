@@ -1,7 +1,6 @@
 package com.chplalex.test360kt.main
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
@@ -15,12 +14,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        Log.d("KKK", "toolbar = $toolbar")
-
-        toolbar?.let{
-            setSupportActionBar(it)
-            it.title = "KKK"
-        }
+        toolbar?.let{ setSupportActionBar(it) }
 
         val navController = Navigation.findNavController(this, R.id.navHostFragment)
 

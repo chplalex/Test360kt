@@ -1,23 +1,30 @@
 package com.chplalex.test360kt.cameras
 
 import android.Manifest.permission.*
+import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.os.Build
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
+import android.location.LocationManager
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.M
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
+import android.provider.Settings
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.view.View.INVISIBLE
+import android.view.View.VISIBLE
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.view.Window
-import android.view.WindowManager
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -27,6 +34,7 @@ import com.dermandar.dmd_lib.CallbackInterfaceShooter
 import com.dermandar.dmd_lib.DMD_Capture
 import com.dermandar.dmd_lib.DMD_Capture.ExposureMode
 import com.nativesystem.Core
+import java.io.File
 import java.util.*
 
 class ShooterActivity : AppCompatActivity() {
@@ -41,6 +49,9 @@ class ShooterActivity : AppCompatActivity() {
         private const val MY_PERMISSIONS_REQUEST_LOCATION = 1
         private const val MY_PERMISSIONS_REQUEST_CAMERA = 2
         private const val MY_PERMISSIONS_REQUEST_STORAGE = 3
+
+        var locationAsked = false
+        private const val SP_NAME = "Test360kt"
     }
 
     internal enum class detectResult {
@@ -50,6 +61,8 @@ class ShooterActivity : AppCompatActivity() {
         DMDCircleDetectionGood
     }
 
+    private var IS_HD = false
+    private val drawcircle = true
     private var mRelativeLayout: RelativeLayout? = null
     private var mWidth = 0
     private var mHeight = 0
@@ -58,28 +71,30 @@ class ShooterActivity : AppCompatActivity() {
     private var mIsCameraReady = false
     private var mPanoramaPath: String? = null
     private var mEquiPath = ""
-    private val mScreenWidth = 0
+    private var mScreenWidth = 0
     private var mScreenHeight = 0
-    private val mAspectRatio = 0.0
+    private var mAspectRatio = 0.0
     private var circle: ImageView? = null
     private var viewGroup: ViewGroup? = null
     private var saveOri = true
-    private val mDisplayRotation = 0
+    private var mDisplayRotation = 0
     private val request_Code = 103
     private var prefModeKey = "ShotMode"
     private var prefLensKey = "LensSelected"
     private var prefLensNameKey = "LensSelectedName"
-    private var selectedLens = "none"
-    private var lensName = "None"
+    private var selectedLens: String? = "none"
+    private var lensName: String? = "None"
     private var txtLensName: TextView? = null
     private var txtShootMode: Button? = null
     private var imgRotMode: ImageView? = null
     private var showYinYang = true
     private val camAdded =
         false //used in case when permissions are asked or bluetooth to turn on i requested (onresume is entered before on create sub)
+    private var lensIDRotator = 0
+    private var isSDKRotator = false
     private var mNumberTakenImages = 0
     private var mCurrentInstructionMessageID = -1
-    private val mTextViewInstruction: TextView? = null
+    private var mTextViewInstruction: TextView? = null
     private var imgName: String? = null
     private var folderName = "Panoramas"
     private val mIsOpenGallery = false
@@ -91,22 +106,28 @@ class ShooterActivity : AppCompatActivity() {
     private var isRequestExit = false
     private var isRequestViewer = false
 
+    internal enum class fisheye {
+        none
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         window.setFlags(
             WindowManager.LayoutParams.FLAG_FULLSCREEN,
             WindowManager.LayoutParams.FLAG_FULLSCREEN
         )
 
-        checkPermissions()
-        onCreateSub()
-    }
+        if (SDK_INT < M) {
+            onCreateSub()
+            return
+        }
 
-    // Проверяем наличие необходимых разрешений
-    // TODO проверить, всё ли из этого нам действительно необходимо
-    private fun checkPermissions() {
-        if (SDK_INT < M) return
+        if (checkPermissionsAll()) {
+            onCreateSub()
+            return
+        }
 
         if (!checkPermissionsCamera()) {
             requestPermissionsCamera()
@@ -124,73 +145,63 @@ class ShooterActivity : AppCompatActivity() {
         }
     }
 
+    // Проверяем наличие необходимых разрешений
+    // TODO проверить, всё ли из этого нам действительно необходимо
+    private fun checkPermissionsAll() =
+        if (SDK_INT < M)
+            true
+        else
+            checkPermissionsCamera() && checkPermissionsStorage() && checkPermissionsLocation()
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
         Log.d(TAG, "onRequestPermissionsResult main")
+
+        if ((requestCode != MY_PERMISSIONS_REQUEST_CAMERA) &&
+            (requestCode != MY_PERMISSIONS_REQUEST_STORAGE) &&
+            (requestCode != MY_PERMISSIONS_REQUEST_LOCATION)
+        ) return
 
         if (SDK_INT < M) return
 
-        when (requestCode) {
-            MY_PERMISSIONS_REQUEST_CAMERA -> {
-                Log.d(TAG, "MY_PERMISSIONS_REQUEST_CAMERA")
-                // If request is cancelled, the result arrays are empty.
-                if (!checkPermissionsCamera()) {
-                    toastMessage("Camera permissions are not optional!")
-                    finish()
-                    return
-                }
-                if (!checkPermissionsStorage()) {
-                    requestPermissionsStorage()
-                    return
-                }
-                if (!checkPermissionsLocation()) {
-                    requestPermissionsLocation()
-                    return
-                }
+        if (checkPermissionsAll()) {
+            onCreateSub()
+            return
+        }
+
+        if (!checkPermissionsCamera()) {
+            if (requestCode == MY_PERMISSIONS_REQUEST_CAMERA) {
+                toastMessage("Can't working without camera permission")
+                finish()
+            } else {
+                requestPermissionsCamera()
                 return
-            }
-            MY_PERMISSIONS_REQUEST_STORAGE -> {
-                Log.d(TAG, "MY_PERMISSIONS_REQUEST_STORAGE")
-                if (!checkPermissionsCamera()) {
-                    toastMessage("Camera permissions are not optional!")
-                    finish()
-                    return
-                }
-                if (!checkPermissionsStorage()) {
-                    toastMessage("Storage permissions are not optional!")
-                    finish()
-                    return
-                }
-                if (!checkPermissionsLocation()) {
-                    requestPermissionsLocation()
-                    return
-                }
-                return
-            }
-            MY_PERMISSIONS_REQUEST_LOCATION -> {
-                Log.d(TAG, "MY_PERMISSIONS_REQUEST_LOCATION")
-                if (!checkPermissionsCamera()) {
-                    toastMessage("Camera permissions are not optional!")
-                    finish()
-                    return
-                }
-                if (!checkPermissionsStorage()) {
-                    toastMessage("Storage permissions are not optional!")
-                    finish()
-                    return
-                }
-                if (!checkPermissionsLocation()) {
-                    toastMessage("Location permissions are not optional!")
-                    finish()
-                    return
-                }
             }
         }
+
+        if (!checkPermissionsStorage()) {
+            if (requestCode == MY_PERMISSIONS_REQUEST_STORAGE) {
+                toastMessage("Can't working without storage permissions")
+                finish()
+            } else {
+                requestPermissionsStorage()
+                return
+            }
+        }
+
+        if (!checkPermissionsLocation()) {
+            if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
+                toastMessage("Can't working without location permissions")
+                finish()
+            } else {
+                requestPermissionsLocation()
+                return
+            }
+        }
+
     }
 
     @RequiresApi(M)
@@ -204,8 +215,8 @@ class ShooterActivity : AppCompatActivity() {
 
     @RequiresApi(M)
     private fun checkPermissionsLocation() =
-        (checkSelfPermission(READ_EXTERNAL_STORAGE) == PERMISSION_GRANTED &&
-                checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PERMISSION_GRANTED)
+        (checkSelfPermission(ACCESS_FINE_LOCATION) == PERMISSION_GRANTED &&
+                checkSelfPermission(ACCESS_COARSE_LOCATION) == PERMISSION_GRANTED)
 
     @RequiresApi(M)
     private fun requestPermissionsCamera() = requestPermissions(
@@ -239,100 +250,374 @@ class ShooterActivity : AppCompatActivity() {
 
     // необходимые права имеются. работаем дальше.
     private fun onCreateSub() {
+        var lp: RelativeLayout.LayoutParams
+
+        Log.d(TAG, "oncreatesub")
+
+        //validate location on
+        if (!locationAsked) {
+            val lm = getSystemService(LOCATION_SERVICE) as LocationManager
+            var gps_enabled = false
+            var network_enabled = false
+
+            try {
+                gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
+            } catch (ex: Exception) {
+                toastMessage("GPS locating isn't enabled")
+            }
+
+            try {
+                network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+            } catch (ex: Exception) {
+                toastMessage("Network locating isn't enabled")
+            }
+
+            if (!gps_enabled && !network_enabled) {
+                // notify user
+                AlertDialog.Builder(this)
+                    .setMessage("Your GPS is turned off, you may need to turn it on to connect to the Bluetooth rotator")
+                    .setPositiveButton("Open Location Setting") { _, _ ->
+                        startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+                    }
+                    .setNegativeButton("Ignore") { _, _ ->
+                    }
+                    .show()
+                locationAsked = true
+            }
+        }
+        //end validate location on
+
+        val pref = getSharedPreferences(SP_NAME, MODE_PRIVATE)
+
+        val lastShootMode = pref.getString(prefModeKey, "")
+        if (lastShootMode == "")
+            pref.edit().apply {
+                if (isSDKRotator)
+                    putString(prefModeKey, "rotator")
+                else
+                    putString(prefModeKey, "hand")
+                apply()
+            }
+        else
+            isSDKRotator = (lastShootMode == "rotator")
+
+        //mDisplayMetrics = DisplayMetrics()
+        mDisplayRotation = windowManager.defaultDisplay.rotation
+
+        val path = Environment.getExternalStorageDirectory().toString() + "/" + folderName
+        val _path = File(path)
+        _path.mkdirs()
+        Log.d(TAG, "path:**$path")
+        //Core.setLogPath(path);
+        //Core.setDebugPathRotator(path);
+
+        //getting screen resolution
+        val mDisplay = windowManager.defaultDisplay
+        val mDisplayMetrics = DisplayMetrics()
+        mDisplay.getMetrics(mDisplayMetrics)
+        val mDisplayRotation = windowManager.defaultDisplay.rotation
+
+        //Full screen activity
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+        if (mDisplayRotation == Surface.ROTATION_0 || mDisplayRotation == Surface.ROTATION_180) {
+            mScreenWidth = mDisplayMetrics.widthPixels
+            mScreenHeight = mDisplayMetrics.heightPixels
+        } else {
+            mScreenWidth = mDisplayMetrics.heightPixels
+            mScreenHeight = mDisplayMetrics.widthPixels
+        }
+
+        mAspectRatio = mScreenHeight.toDouble() / mScreenWidth.toDouble()
+
+        requestedOrientation = if (mAspectRatio < 1.0)
+            ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
+        else
+            ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+
         setContentView(R.layout.activity_shooter)
 
         mRelativeLayout = findViewById<View>(R.id.relativeLayout) as RelativeLayout
 
-        val display = getDisplay()
+        val display = windowManager.defaultDisplay
         val displayMetrics = DisplayMetrics()
-        display?.getMetrics(displayMetrics)
-
+        display.getMetrics(displayMetrics)
         mWidth = displayMetrics.widthPixels
         mHeight = displayMetrics.heightPixels
 
         startShooter()
+
+        //Text View instruction
+        mTextViewInstruction = TextView(this).apply {
+            textSize = 32f
+            gravity = Gravity.CENTER
+            setTextColor(Color.WHITE)
+        }
+        setInstructionMessage(R.string.tap_anywhere_to_start)
+        mRelativeLayout?.addView(
+            mTextViewInstruction,
+            RelativeLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
+        )
+
+        //circle
+        val displaymetrics = DisplayMetrics()
+        windowManager.defaultDisplay.getMetrics(displaymetrics)
+        circle = ImageView(this).apply {
+            alpha = 0.3f
+        }
+        if (drawcircle) mRelativeLayout?.addView(circle)
+
+        val shape = GradientDrawable().apply {
+            cornerRadius = 50f
+            setColor(Color.parseColor("#88a8a8a8"))
+        }
+
+        txtLensName = TextView(this).apply {
+            textSize = 16f
+            gravity = Gravity.CENTER
+            setTextColor(Color.BLACK)
+            setPadding(20, 20, 20, 20)
+            background = shape
+
+            setOnClickListener {
+                if (mIsShootingStarted) return@setOnClickListener
+                //  if(mDMDCapture.canShootHDR())
+                //  mDMDCapture.setHDRStatus(false);
+                val intent = Intent(this@ShooterActivity, LensesActivity::class.java).apply {
+                    putExtra("CurrentLens", selectedLens)
+                }
+                startActivityForResult(intent, request_Code)
+            }
+        }
+
+        // You might want to tweak these to WRAP_CONTENT
+        lp = RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
+            addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+            addRule(RelativeLayout.ALIGN_PARENT_RIGHT)
+            bottomMargin = 200
+            rightMargin = 20
+        }
+
+        mRelativeLayout?.addView(txtLensName, lp)
+
+        val lastUsedLense = pref.getString(prefLensKey, "none")
+        if (lastUsedLense == "") {
+            pref.edit().apply {
+                putString(prefLensKey, selectedLens)
+                apply()
+            }
+        } else {
+            selectedLens = lastUsedLense
+            lensName = pref.getString(prefLensNameKey, "Линз нет")
+        }
+
+        imgRotMode = ImageView(this).apply {
+            if (isSDKRotator)
+                setImageResource(R.drawable.rotator_disconn)
+            else
+                setImageResource(R.drawable.handheld)
+            //imgRotMode.setBackgroundColor(Color.WHITE);
+        }
+
+        // You might want to tweak these to WRAP_CONTENT
+        lp = RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
+            addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
+            addRule(RelativeLayout.ALIGN_PARENT_LEFT)
+            bottomMargin = 200
+            leftMargin = 70
+        }
+
+        mRelativeLayout?.addView(imgRotMode, lp)
+
+        imgRotMode?.setOnClickListener {
+
+            if (mDMDCapture == null) return@setOnClickListener
+
+            isSDKRotator = !isSDKRotator
+
+            pref.edit().apply {
+                if (isSDKRotator)
+                    putString(prefModeKey, "rotator")
+                else
+                    putString(prefModeKey, "hand")
+                apply()
+            }
+
+            if (isSDKRotator)
+                imgRotMode?.setImageResource(R.drawable.rotator_disconn)
+            else
+                imgRotMode?.setImageResource(R.drawable.handheld)
+
+            mDMDCapture?.prepareFlipMode(isSDKRotator)
+
+            // start solve fast switch issue
+            val progress = ProgressDialog(this@ShooterActivity).apply {
+                if (isSDKRotator) {
+                    setTitle("Подключение...")
+                    setMessage("Подключение к ротатору")
+                } else {
+                    setTitle("Отключение...")
+                    setMessage("Отключение от ротатора")
+                }
+                setCancelable(false) // disable dismiss by tapping outside of the dialog
+                show()
+            }
+
+            imgRotMode?.isEnabled = false
+
+            Handler().postDelayed({
+                progress.dismiss()
+                imgRotMode?.isEnabled = true
+            }, 2000)
+            // end solve fast switch issue
+        }
+
+        //setStartShootingHand();
+        mDMDCapture?.apply {
+            setLensSelected(selectedLens != "none")
+            FL = fl
+        }
+
+        setNewLens(getLensNb(selectedLens))
+    }
+
+    fun getLensNb(selectedLens: String?): Int {
+        return fisheye.valueOf(selectedLens!!).ordinal
+    }
+
+    fun setNewLens(lensId: Int) {
+        txtLensName?.text = lensName
+        lensIDRotator = lensId
+        mDMDCapture?.setLens(lensId)
+    }
+
+    override fun onPause() {
+        Log.d(TAG, "onPause")
+
+        super.onPause()
+
+        window.clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        mDMDCapture?.apply {
+            if (mIsShootingStarted) {
+                stopShooting()
+                mIsShootingStarted = false
+            }
+            stopCamera()
+        }
+    }
+
+    override fun onResume() {
+        Log.d(TAG, "on resume")
+
+        super.onResume()
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+
+        mDMDCapture?.apply {
+            Log.d(TAG, "onResume::startCamera")
+            startCamera(this@ShooterActivity, mWidth, mHeight)
+            //mDMDCapture.setContinuousShooting(true);
+        }
+
+        mTextViewInstruction?.visibility = VISIBLE
+        imgRotMode?.visibility = VISIBLE
+        txtLensName?.visibility = VISIBLE
+    }
+
+    override fun onBackPressed() {
+        Log.d(TAG, "onBackPressed")
+        if (mIsShootingStarted) {
+            mDMDCapture?.stopShooting()
+            mIsShootingStarted = false
+            imgRotMode?.visibility = VISIBLE
+            txtLensName?.visibility = VISIBLE
+        } else {
+            isRequestExit = true
+            isRequestViewer = false
+            mDMDCapture?.releaseShooter()
+        }
     }
 
     private fun startShooter() {
-//        var isRequestViewer = false
-        var IS_HD = false
-//        var viewGroup: ViewGroup? = null
+        Log.d(TAG, "startShooter")
 
+        isRequestViewer = false
         mDMDCapture = DMD_Capture()
-        mDMDCapture?.setRotatorMode(false)
-        mDMDCapture?.setExportOriOn()
+        mDMDCapture?.setRotatorMode(isSDKRotator)
+
+        if (saveOri) mDMDCapture!!.setExportOriOn()
 
         mDMDCapture?.setCircleDetectionCallback { res ->
             val x: detectResult = detectResult.values().get(res)
-            Log.d(TAG, "result detection:$res")
+            Log.d("TAG", "result detection:$res")
             if (x == detectResult.DMDCircleDetectionInvalidInput) {
-                toastMessage("Something went wrong in detecting the lens.")
-            } else if (x == ShooterActivity.detectResult.DMDCircleDetectionCircleNotFound) {
+                toastMessage("Что-то с линзами пошло не так...")
+            } else if (x == detectResult.DMDCircleDetectionCircleNotFound) {
                 drawCircle(R.drawable.yellowcircle)
-            } else if (x == ShooterActivity.detectResult.DMDCircleDetectionBad) {
+            } else if (x == detectResult.DMDCircleDetectionBad) {
                 drawCircle(R.drawable.redcircle)
-            } else if (x == ShooterActivity.detectResult.DMDCircleDetectionGood) {
+            } else if (x == detectResult.DMDCircleDetectionGood) {
                 drawCircle(R.drawable.greencircle)
             }
         }
-
-        mDMDCapture?.let {
-            it.canShootHD()
-            it.setResolutionHD()
+        if (mDMDCapture!!.canShootHD()) {
+            mDMDCapture!!.setResolutionHD()
             IS_HD = true
         }
 
-        viewGroup = mDMDCapture?.initShooter(
-            this,
-            mCallbackInterface,
-            windowManager.defaultDisplay.rotation,
-            true,
-            true
-        )
+        viewGroup = mDMDCapture!!.initShooter(this, mCallbackInterface, windowManager.defaultDisplay.rotation, true, true)
+
         mRelativeLayout!!.addView(viewGroup, 0)
 
-        viewGroup?.setOnClickListener {
-            if (mIsCameraReady) {
-                if (!mIsShootingStarted) {
-                    mNumberTakenImages = 0
-                    mPanoramaPath =
-                        Environment.getExternalStorageDirectory().toString() + "/Lib_Test/"
-                    mDMDCapture?.let { mIsShootingStarted = it.startShooting(mPanoramaPath) }
-                    if (mIsShootingStarted) {
-                        imgRotMode?.setVisibility(View.INVISIBLE)
-                        txtLensName?.setVisibility(View.INVISIBLE)
-                    } else {
-                        imgRotMode?.setVisibility(View.VISIBLE)
-                        txtLensName?.setVisibility(View.VISIBLE)
-                    }
+        viewGroup?.setOnClickListener(View.OnClickListener {
+            if (!mIsCameraReady) return@OnClickListener
+            if (mIsShootingStarted) {
+
+                mDMDCapture!!.finishShooting()
+
+                mIsShootingStarted = false
+
+                imgRotMode?.visibility = VISIBLE
+                txtLensName?.visibility = VISIBLE
+            } else {
+                mNumberTakenImages = 0
+
+                mPanoramaPath = Environment.getExternalStorageDirectory().toString() + "/Lib_Test/"
+                mIsShootingStarted = mDMDCapture!!.startShooting(mPanoramaPath)
+
+                if (mIsShootingStarted) {
+                    imgRotMode?.visibility = INVISIBLE
+                    txtLensName?.visibility = INVISIBLE
                 } else {
-                    mDMDCapture?.finishShooting()
-                    mIsShootingStarted = false
-                    imgRotMode?.setVisibility(View.VISIBLE)
-                    txtLensName?.setVisibility(View.VISIBLE)
+                    imgRotMode?.visibility = VISIBLE
+                    txtLensName?.visibility = VISIBLE
                 }
             }
-        }
+        })
     }
 
-    fun drawCircle(_resId: Int) {
-        val relMain: View = findViewById<View>(R.id.relativeLayout) as RelativeLayout
+    private fun drawCircle(_resId: Int) {
+        val relMain = findViewById<RelativeLayout>(R.id.relativeLayout)
+
         val dm = DisplayMetrics()
-        this.windowManager.defaultDisplay.getMetrics(dm)
+        windowManager.defaultDisplay.getMetrics(dm)
+
         val topOffset = dm.heightPixels - relMain.measuredHeight
-        val tempView = viewGroup
+
         val position = IntArray(2)
-        tempView?.getLocationOnScreen(position)
+        viewGroup?.getLocationOnScreen(position)
+
         val y = position[1] - topOffset
+
         runOnUiThread {
             val dim = IntArray(2)
             val dim2 = IntArray(2)
 
-            viewGroup?.let {
-                it.getLocationInWindow(dim)
-                it.getLocationOnScreen(dim2)
-                activityW = it.getWidth().toFloat()
-                activityH = it.getHeight().toFloat()
+            viewGroup?.apply {
+                getLocationInWindow(dim)
+                getLocationOnScreen(dim2)
+                activityW = width.toFloat()
+                activityH = height.toFloat()
             }
 
             Log.d(TAG, "dim:" + dim[0] + " " + dim[1])
@@ -355,18 +640,17 @@ class ShooterActivity : AppCompatActivity() {
 
             Log.d(TAG, "mars: $marginLeft $marginRight $marginTop $marginBottom")
 
-            circle?.let { itс ->
-                val lp = RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).also {
-                    it.leftMargin = -marginLeft //-margin; -marginLeft;
-                    it.rightMargin = -marginRight //-margin; -marginRight;
-                    it.topMargin = marginTop
-                    it.bottomMargin = -marginBottom
-                    it.width = Math.round(circlediameter)
-                    it.height = Math.round(circlediameter)
+            circle?.apply {
+                setImageResource(_resId)
+                layoutParams = RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
+                    leftMargin = -marginLeft //-margin; -marginLeft;
+                    rightMargin = -marginRight //-margin; -marginRight;
+                    topMargin = marginTop
+                    bottomMargin = -marginBottom
+                    width = Math.round(circlediameter)
+                    height = Math.round(circlediameter)
                 }
-                itс.setImageResource(_resId)
-                itс.setLayoutParams(lp)
-                itс.setVisibility(View.VISIBLE)
+                visibility = VISIBLE
             }
         }
     }
@@ -376,7 +660,7 @@ class ShooterActivity : AppCompatActivity() {
         override fun onCameraStopped() {
             mIsShootingStarted = false
             mIsCameraReady = false
-            timer?.let { it.cancel() }
+            timer?.cancel()
             timer = null
         }
 
@@ -474,8 +758,8 @@ class ShooterActivity : AppCompatActivity() {
             //isRequestViewer = true;
             //mDMDCapture.stopCamera();
             //mDMDCapture.releaseShooter();
-            imgRotMode?.setVisibility(View.VISIBLE)
-            txtLensName?.setVisibility(View.VISIBLE)
+            imgRotMode?.visibility = View.VISIBLE
+            txtLensName?.visibility = View.VISIBLE
         }
 
         override fun onExposureChanged(mode: ExposureMode) {

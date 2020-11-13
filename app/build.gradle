@@ -15,7 +15,7 @@ android {
     buildToolsVersion "30.0.2"
 
     defaultConfig {
-        applicationId "com.chplalex.Test360kt"
+        applicationId "com.chplalex.test360kt"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 2

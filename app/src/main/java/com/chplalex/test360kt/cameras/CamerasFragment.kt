@@ -2,22 +2,16 @@ package com.chplalex.test360kt.cameras
 
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Insets
-import android.graphics.Rect
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
-import android.util.Size
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.WindowInsets
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.chplalex.test360kt.R
-import com.chplalex.test360kt.utils.TAG
 
 private const val CAMERA_REQUEST = 4747
 

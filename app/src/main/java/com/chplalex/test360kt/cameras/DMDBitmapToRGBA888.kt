@@ -8,6 +8,7 @@ class DMDBitmapToRGBA888 {
 
     companion object {
 
+        @JvmStatic
         fun imageToRGBA8888(bmp: Bitmap?): ByteArray? {
             if (bmp == null) return null
             val bytes = ByteArray(bmp.allocationByteCount)

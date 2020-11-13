@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".main.MainActivity"
+    tools:context="com.dermandar.test360kt.com.chplalex.test360kt.main.MainActivity"
     tools:openDrawer="start">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -36,7 +36,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/toolbar"
-            tools:context=".main.MainActivity">
+            tools:context="com.dermandar.test360kt.com.chplalex.test360kt.main.MainActivity">
 
             <fragment
                 android:id="@+id/navHostFragment"
