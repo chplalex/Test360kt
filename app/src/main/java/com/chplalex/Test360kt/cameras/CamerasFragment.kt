@@ -1,4 +1,4 @@
-package com.chplalex.test360kt.cameras
+package com.chplalex.Test360kt.cameras
 
 import android.content.Intent
 import android.graphics.Bitmap
@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.chplalex.test360kt.R
+import com.chplalex.Test360kt.R
 
 private const val CAMERA_REQUEST = 4747
 

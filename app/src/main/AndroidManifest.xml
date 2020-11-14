@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.chplalex.test360kt">
+    package="com.chplalex.Test360kt">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <!--
@@ -45,7 +45,7 @@
         android:hardwareAccelerated="true"
         android:largeHeap="true">
 
-        <activity android:name=".main.MainActivity">
+        <activity android:name="com.chplalex.Test360kt.main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -53,26 +53,26 @@
         </activity>
 
         <activity
-            android:name=".cameras.ImageActivity"
+            android:name="com.chplalex.Test360kt.cameras.ImageActivity"
             android:label="@string/title_activity_image"
             android:theme="@style/Theme.Test360kt.NoActionBar"/>
 
-        <activity android:name=".galleries.PanoramaActivity"
+        <activity android:name="com.chplalex.Test360kt.galleries.PanoramaActivity"
             android:label="@string/title_activity_panorama"
             android:theme="@style/Theme.Test360kt.NoActionBar"/>
 
-        <activity android:name=".cameras.ShooterActivity"
+        <activity android:name="com.chplalex.Test360kt.cameras.ShooterActivity"
             android:label="@string/title_activity_shooter"
             android:theme="@style/Theme.Test360kt.NoActionBar"
             android:configChanges="orientation"/>
 
-        <activity android:name=".cameras.ShooterActivity_pano"
+        <activity android:name="com.chplalex.Test360kt.cameras.ShooterActivity_pano"
             android:label="@string/title_activity_shooter"
             android:theme="@style/Theme.Test360kt.NoActionBar"
             android:configChanges="orientation"/>
 
         <activity
-            android:name=".cameras.LensesActivity"
+            android:name="com.chplalex.Test360kt.cameras.LensesActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label=""
             android:screenOrientation="sensor"

@@ -1,11 +1,11 @@
-package com.chplalex.test360kt.galleries
+package com.chplalex.Test360kt.galleries
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.chplalex.test360kt.R
+import com.chplalex.Test360kt.R
 import kotlinx.android.synthetic.main.list_item.view.*
 
 class ThumbsAdapter(private val sourceList: List<SourceData>) :

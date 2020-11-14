@@ -1,4 +1,4 @@
-package com.chplalex.test360kt
+package com.chplalex.Test360kt
 
 import org.junit.Test
 

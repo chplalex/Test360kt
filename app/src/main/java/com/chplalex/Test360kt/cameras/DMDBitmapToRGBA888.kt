@@ -1,4 +1,4 @@
-package com.chplalex.test360kt.cameras
+package com.chplalex.Test360kt.cameras
 
 import android.graphics.Bitmap
 import android.graphics.Color.*

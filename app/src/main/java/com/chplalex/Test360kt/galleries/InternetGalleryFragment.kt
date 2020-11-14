@@ -1,4 +1,4 @@
-package com.chplalex.test360kt.galleries
+package com.chplalex.Test360kt.galleries
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
-import com.chplalex.test360kt.R
+import com.chplalex.Test360kt.R
 
 class InternetGalleryFragment : Fragment() {
 

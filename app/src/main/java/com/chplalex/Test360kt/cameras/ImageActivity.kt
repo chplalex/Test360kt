@@ -1,8 +1,8 @@
-package com.chplalex.test360kt.cameras
+package com.chplalex.Test360kt.cameras
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.chplalex.test360kt.R
+import com.chplalex.Test360kt.R
 
 class ImageActivity : AppCompatActivity() {
 

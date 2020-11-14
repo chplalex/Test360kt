@@ -1,11 +1,11 @@
-package com.chplalex.test360kt.main
+package com.chplalex.Test360kt.main
 
 import android.os.Bundle
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.Navigation
 import androidx.navigation.ui.NavigationUI
-import com.chplalex.test360kt.R
+import com.chplalex.Test360kt.R
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {

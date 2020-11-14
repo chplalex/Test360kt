@@ -1,4 +1,4 @@
-package com.chplalex.test360kt.cameras
+package com.chplalex.Test360kt.cameras
 
 import android.Manifest.permission.*
 import android.app.AlertDialog
@@ -28,10 +28,10 @@ import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import com.chplalex.test360kt.R
-import com.chplalex.test360kt.galleries.PanoramaActivity
-import com.chplalex.test360kt.galleries.SourceData
-import com.chplalex.test360kt.utils.TAG
+import com.chplalex.Test360kt.R
+import com.chplalex.Test360kt.galleries.PanoramaActivity
+import com.chplalex.Test360kt.galleries.SourceData
+import com.chplalex.Test360kt.utils.TAG
 import com.dermandar.dmd_lib.CallbackInterfaceShooter
 import com.dermandar.dmd_lib.DMD_Capture
 import com.dermandar.dmd_lib.DMD_Capture.ExposureMode

@@ -1,4 +1,4 @@
-package com.chplalex.test360kt.cameras
+package com.chplalex.Test360kt.cameras
 
 import android.app.Activity
 import android.os.Bundle
@@ -9,7 +9,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.view.View
 import android.view.Window
-import com.chplalex.test360kt.R
+import com.chplalex.Test360kt.R
 
 class LensesActivity : Activity() {
 

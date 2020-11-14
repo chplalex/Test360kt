@@ -1,4 +1,4 @@
-package com.chplalex.test360kt.cameras
+package com.chplalex.Test360kt.cameras
 
 import android.Manifest
 import android.app.Activity
@@ -24,7 +24,7 @@ import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.core.app.ActivityCompat
-import com.chplalex.test360kt.R
+import com.chplalex.Test360kt.R
 import com.dermandar.dmd_lib.CallbackInterfaceShooter
 import com.dermandar.dmd_lib.DMD_Capture
 import com.dermandar.dmd_lib.DMD_Capture.CircleDetectionCallback
