@@ -57,7 +57,7 @@
             android:label="@string/title_activity_image"
             android:theme="@style/Theme.Test360kt.NoActionBar"/>
 
-        <activity android:name=".internet.PanoramaActivity"
+        <activity android:name=".galleries.PanoramaActivity"
             android:label="@string/title_activity_panorama"
             android:theme="@style/Theme.Test360kt.NoActionBar"/>
 

@@ -88,7 +88,7 @@
             android:layout_columnWeight="1"
             android:layout_gravity="fill"
             android:background="@color/design_default_color_background"
-            android:src="@drawable/ic_camera" />
+            android:src="@drawable/pano" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -110,7 +110,7 @@
             android:layout_columnWeight="1"
             android:layout_gravity="fill"
             android:background="@color/design_default_color_background"
-            android:src="@drawable/ic_camera" />
+            android:src="@drawable/pano" />
 
     </GridLayout>
 

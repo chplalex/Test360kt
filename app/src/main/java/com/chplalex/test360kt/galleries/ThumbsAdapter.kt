@@ -1,4 +1,4 @@
-package com.chplalex.test360kt.internet
+package com.chplalex.test360kt.galleries
 
 import android.view.LayoutInflater
 import android.view.View

@@ -9,5 +9,9 @@
     <item
         android:id="@+id/internetGalleryFragment"
         android:icon="@drawable/ic_gallery"
-        android:title="@string/label_gallery" />
+        android:title="@string/label_gallery_internet" />
+    <item
+        android:id="@+id/panoGalleryFragment"
+        android:icon="@drawable/ic_gallery"
+        android:title="@string/label_gallery_pano" />
 </menu>

@@ -1,4 +1,4 @@
-package com.chplalex.test360kt.internet
+package com.chplalex.test360kt.galleries
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -46,7 +46,7 @@ class InternetGalleryFragment : Fragment() {
             container: ViewGroup?,
             savedInstanceState: Bundle?
     ): View? = inflater.inflate(R.layout.fragment_internet_gallery, container,false)?.also {
-        activity?.title = resources.getString(R.string.label_gallery)
+        activity?.title = resources.getString(R.string.label_gallery_internet)
         it.findViewById<RecyclerView>(R.id.rvThumbs)?.adapter =  ThumbsAdapter(sourceList)
     }
 

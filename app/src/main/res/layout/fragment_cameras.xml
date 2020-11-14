@@ -79,7 +79,7 @@
             android:layout_width="75dp"
             android:layout_height="75dp"
             android:background="@color/design_default_color_background"
-            android:src="@drawable/ic_camera"
+            android:src="@drawable/pano"
             android:tooltipText="Full"/>
 
         <TextView

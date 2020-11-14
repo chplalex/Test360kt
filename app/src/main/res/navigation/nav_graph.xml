@@ -15,7 +15,12 @@
         tools:layout="@layout/fragment_cameras"/>
     <fragment
         android:id="@+id/internetGalleryFragment"
-        android:name="com.chplalex.test360kt.internet.InternetGalleryFragment"
+        android:name="com.chplalex.test360kt.galleries.InternetGalleryFragment"
+        android:label="InternetGalleryFragment"
+        tools:layout="@layout/fragment_internet_gallery"/>
+    <fragment
+        android:id="@+id/panoramaGalleryFragment"
+        android:name="com.chplalex.test360kt.galleries.InternetGalleryFragment"
         android:label="InternetGalleryFragment"
         tools:layout="@layout/fragment_internet_gallery"/>
     <activity
@@ -25,7 +30,11 @@
         tools:layout="@layout/activity_image"/>
     <activity
         android:id="@+id/panoramaActivity"
-        android:name="com.chplalex.test360kt.internet.PanoramaActivity"
+        android:name="com.chplalex.test360kt.galleries.PanoramaActivity"
         android:label="PanoramaActivity"
         tools:layout="@layout/activity_panorama"/>
+    <activity
+        android:id="@+id/shooterActivity"
+        android:name="com.chplalex.test360kt.cameras.ShooterActivity"
+        android:label="ShooterActivity" />
 </navigation>

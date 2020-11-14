@@ -9,7 +9,7 @@
     <string name="title_activity_panorama" translatable="false">Activity Panorama</string>
     <string name="title_activity_shooter">Activity PSDK Shooter</string>
     <string name="label_cameras">Камеры</string>
-    <string name="label_gallery">Галерея из интернета</string>
+    <string name="label_gallery_internet">Галерея 360 из интернета</string>
     <string name="text_camera_simple">вызов внешней камеры\nв "ПРОСТОМ" режиме\nACTION_IMAGE_CAPTURE</string>
     <string name="text_camera_full">вызов внешней камеры\nв "ПОЛНОМ" режиме\nINTENT_ACTION_STILL_IMAGE_CAMERA</string>
     <string name="text_camera_panorama_sdk">вызов камеры\nPANORAMA SDK</string>
@@ -79,5 +79,8 @@
     <string name="popup_deleting">Deleting&#8230;</string>
     <string name="delete_conf">Delete</string>
     <string name="deleted_msg">Panorama deleted</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="label_gallery_pano">Галерея 360 на устройстве</string>
 
 </resources>

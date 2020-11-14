@@ -1,4 +1,4 @@
-package com.chplalex.test360kt.internet
+package com.chplalex.test360kt.galleries
 
 import android.os.Parcelable
 import kotlinx.android.parcel.Parcelize
