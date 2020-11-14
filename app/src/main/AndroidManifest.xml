@@ -66,6 +66,11 @@
             android:theme="@style/Theme.Test360kt.NoActionBar"
             android:configChanges="orientation"/>
 
+        <activity android:name=".cameras.ShooterActivity_pano"
+            android:label="@string/title_activity_shooter"
+            android:theme="@style/Theme.Test360kt.NoActionBar"
+            android:configChanges="orientation"/>
+
         <activity
             android:name=".cameras.LensesActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"

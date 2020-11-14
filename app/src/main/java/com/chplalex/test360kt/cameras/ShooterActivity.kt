@@ -15,7 +15,7 @@ import android.location.LocationManager
 import android.os.Build.VERSION.SDK_INT
 import android.os.Build.VERSION_CODES.M
 import android.os.Bundle
-import android.os.Environment
+import android.os.Environment.DIRECTORY_PICTURES
 import android.os.Handler
 import android.provider.Settings
 import android.util.DisplayMetrics
@@ -29,6 +29,8 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.chplalex.test360kt.R
+import com.chplalex.test360kt.galleries.PanoramaActivity
+import com.chplalex.test360kt.galleries.SourceData
 import com.chplalex.test360kt.utils.TAG
 import com.dermandar.dmd_lib.CallbackInterfaceShooter
 import com.dermandar.dmd_lib.DMD_Capture
@@ -304,7 +306,7 @@ class ShooterActivity : AppCompatActivity() {
         //mDisplayMetrics = DisplayMetrics()
         mDisplayRotation = windowManager.defaultDisplay.rotation
 
-        val path = Environment.getExternalStorageDirectory().toString() + "/" + folderName
+        val path = getExternalFilesDir(DIRECTORY_PICTURES).toString() + "/" + folderName
         val _path = File(path)
         _path.mkdirs()
         Log.d(TAG, "path:**$path")
@@ -582,7 +584,7 @@ class ShooterActivity : AppCompatActivity() {
             } else {
                 mNumberTakenImages = 0
 
-                mPanoramaPath = Environment.getExternalStorageDirectory().toString() + "/Lib_Test/"
+                mPanoramaPath = getExternalFilesDir(DIRECTORY_PICTURES).toString() + "/Lib_Test/"
                 mIsShootingStarted = mDMDCapture!!.startShooting(mPanoramaPath)
 
                 if (mIsShootingStarted) {
@@ -656,43 +658,95 @@ class ShooterActivity : AppCompatActivity() {
     }
 
     private val mCallbackInterface: CallbackInterfaceShooter = object : CallbackInterfaceShooter {
-
         override fun onCameraStopped() {
             mIsShootingStarted = false
             mIsCameraReady = false
-            timer?.cancel()
-            timer = null
+            if (tmr != null) tmr!!.cancel()
+            tmr = null
         }
 
         override fun onCameraStarted() {
             mIsCameraReady = true
+            //            if(tmr!=null) tmr.cancel(); tmr=null;
+//            tmr=new Timer();
+//            tmr.scheduleAtFixedRate(new TimerTask() {
+//                @Override
+//                public void run() {
+//					cnt++;
+//					if(lastMillis==0)lastMillis=System.nanoTime();
+//					if(System.nanoTime()-lastMillis>=1*1000000000) {
+//						Log.e("DMD", "fps: " + cnt);
+//						cnt=0;
+//						lastMillis=System.nanoTime();
+//					}
+//
+//                    HashMap<String, Object> map = mDMDCapture.getIndicators();
+//					Log.e("DMD", "fovx:" + map.get(DMD_Capture.ShootingIndicatorsEnum.fovx.toString()));//Integer value in degrees
+//					Log.e("DMD", "orientation:" + map.get(DMD_Capture.ShootingIndicatorsEnum.orientation.toString()));//Integer, kPanoramaOrientationLTR = -1, kPanoramaOrientationUnknown = 0, kPanoramaOrientationRTL = 1
+            // Log.e("DMD", "percentage:" + map.get(DMD_Capture.ShootingIndicatorsEnum.percentage.toString()));//Double
+//					Log.e("DMD", "pitch:" + map.get(DMD_Capture.ShootingIndicatorsEnum.pitch.toString()));//Double
+//					Log.e("DMD", "roll:" + map.get(DMD_Capture.ShootingIndicatorsEnum.roll.toString()));//Double
+//                }
+//            },0, 16);
         }
 
         override fun onFinishClear() {}
-
         override fun onFinishRelease() {
-            mRelativeLayout?.removeView(viewGroup)
+            mRelativeLayout!!.removeView(viewGroup)
             viewGroup = null
             if (isRequestExit) {
                 finish()
                 return
             }
-            mDMDCapture?.startCamera(this@ShooterActivity, mWidth, mHeight)
+            mDMDCapture!!.startCamera(this@ShooterActivity, mWidth, mHeight)
         }
 
         private val cnt: Long = 0
         private val lastMillis: Long = 0
-        private var timer: Timer? = null
+        override fun onDirectionUpdated(a: Float) {
 
-        override fun onDirectionUpdated(a: Float) {}
-        override fun preparingToShoot() {}
+//			cnt++;
+//			if(lastMillis==0)lastMillis=System.nanoTime();
+//			if(System.nanoTime()-lastMillis>1*1000000000) {
+//				//Log.e("AMS", "fps: " + cnt);
+//				cnt=0;
+//				lastMillis=System.nanoTime();
+//			}
+//			Thread t=new Thread(new Runnable() {
+//				@Override
+//				public void run() {
+//					try {
+//						Thread.sleep((long)100);
+//					} catch (InterruptedException e) {
+//						e.printStackTrace();
+//					}
+//
+//					HashMap<String, Object> map = mDMDCapture.getIndicators();
+////					Log.e("AMS", "fovx:" + map.get(DMD_Capture.ShootingIndicatorsEnum.fovx.toString()));//Integer value in degrees
+//					//Log.e("AMS", "orientation:" + map.get(DMD_Capture.ShootingIndicatorsEnum.orientation.toString()));//Integer, kPanoramaOrientationLTR = -1, kPanoramaOrientationUnknown = 0, kPanoramaOrientationRTL = 1
+//					//Log.e("AMS", "percentage:" + map.get(DMD_Capture.ShootingIndicatorsEnum.percentage.toString()));//Double
+////					Log.e("AMS", "pitch:" + map.get(DMD_Capture.ShootingIndicatorsEnum.pitch.toString()));//Double
+////					Log.e("AMS", "roll:" + map.get(DMD_Capture.ShootingIndicatorsEnum.roll.toString()));//Double
+////					Log.e("AMS", "roll:" + map.get(DMD_Capture.ShootingIndicatorsEnum.roll.toString()));
+//				}
+//			});
+//			t.start();
+        }
+
+        private var tmr: Timer? = null
+        override fun preparingToShoot() {
+            /***
+             * Example about reading the shooting indicators
+             */
+        }
+
         override fun canceledPreparingToShoot() {}
         override fun takingPhoto() {}
         override fun shotTakenPreviewReady(bitmapPreview: Bitmap) {}
-
         override fun photoTaken() {
+            Log.e("rmh", "photoTaken")
+            val map = mDMDCapture!!.indicators
             mNumberTakenImages++
-            Log.d(TAG, "photoTaken $mNumberTakenImages")
             if (mNumberTakenImages <= 0) {
                 setInstructionMessage(R.string.tap_anywhere_to_start)
             } else if (mNumberTakenImages == 1) {
@@ -700,37 +754,36 @@ class ShooterActivity : AppCompatActivity() {
             } else {
                 setInstructionMessage(R.string.tap_to_finish_when_ready_or_continue_rotating)
             }
+
+//					Log.e("AMS", "fovx:" + map.get(DMD_Capture.ShootingIndicatorsEnum.fovx.toString()));//Integer value in degrees
+//            Log.e("AMS", "orientation:" + map.get(DMD_Capture.ShootingIndicatorsEnum.orientation.toString()));//Integer, kPanoramaOrientationLTR = -1, kPanoramaOrientationUnknown = 0, kPanoramaOrientationRTL = 1
+//            Log.e("AMS", "percentage:" + map.get(DMD_Capture.ShootingIndicatorsEnum.percentage.toString()));//Double
         }
 
         override fun stitchingCompleted(info: HashMap<String, Any>) {
-            Log.e(TAG, "stitching completed")
+            Log.e("rmh", "stitching completed")
             val time = System.currentTimeMillis()
             imgName = "img_" + java.lang.Long.toString(time) + ".jpg"
-            mEquiPath =
-                Environment.getExternalStorageDirectory().path + "/" + folderName + "/" + imgName
+            mEquiPath = getExternalFilesDir(DIRECTORY_PICTURES).toString() + "/" + folderName + "/" + imgName
             Log.e("AMS", "decode logo")
             val op = BitmapFactory.Options()
             op.inPreferredConfig = Bitmap.Config.ARGB_8888
             val bmp = BitmapFactory.decodeResource(resources, R.drawable.logo, op)
             val bytes = DMDBitmapToRGBA888.imageToRGBA8888(bmp)
-
-            val min_zenith =
-                0f //specifies the size of the top logo between 0..90 degrees, otherwise it is set to 0
-            val min_nadir =
-                0f //specifies the size of the bottom logo between 0..90 degrees, otherwise it is set to 0
-            val res = mDMDCapture?.setLogo(bytes, min_zenith, min_nadir)
-            // to use  default logo (DMD logo).
-            //val res: Int = mDMDCapture.setLogo(null,min_zenith,min_nadir)
-            Log.d(TAG, "logo set finished: $res")
-            mDMDCapture?.genEquiAt(mEquiPath, 800, 0, 0, false, false)
+            val min_zenith = 0f //specifies the size of the top logo between 0..90 degrees, otherwise it is set to 0
+            val min_nadir = 0f //specifies the size of the bottom logo between 0..90 degrees, otherwise it is set to 0
+            val res = mDMDCapture!!.setLogo(bytes, min_zenith, min_nadir)
+            //int res = mDMDCapture.setLogo(null,min_zenith,min_nadir);  // to use  default logo (DMD logo).
+            Log.e("AMS", "logo set finished: $res")
+            mDMDCapture!!.genEquiAt(mEquiPath, 800, 0, 0, false, false)
             //mDMDCapture.releaseShooter();
         }
 
         override fun shootingCompleted(finished: Boolean) {
-            Log.d(TAG, "shootingCompleted: $finished")
+            Log.e("rmh", "shootingCompleted: $finished")
             if (finished) {
                 //mTextViewInstruction.setVisibility(View.INVISIBLE);
-                mDMDCapture?.stopCamera()
+                mDMDCapture!!.stopCamera()
             }
             mIsShootingStarted = false
         }
@@ -744,31 +797,45 @@ class ShooterActivity : AppCompatActivity() {
         }
 
         override fun compassEvent(info: HashMap<String, Any>) {
-            toastMessage("Compass interference")
+            Toast.makeText(this@ShooterActivity, "Compass interference", Toast.LENGTH_SHORT).show()
             mIsShootingStarted = false
         }
 
         override fun onFinishGeneratingEqui() {
-            Log.d(TAG, "onFinishGeneratingEqui")
+            Log.e("rmh", "onFinishGeneratingEqui")
             mIsShootingStarted = false
-            mDMDCapture?.startCamera(applicationContext, mWidth, mHeight)
-            toastMessage("Image saved to $mEquiPath")
+
+            //mDMDCapture!!.startCamera(applicationContext, mWidth, mHeight)
+            Toast.makeText(this@ShooterActivity, "Image saved to $mEquiPath", Toast.LENGTH_LONG).show()
+            PanoramaActivity.start(this@ShooterActivity, SourceData("Свежее фото", mEquiPath))
 
             //isRequestExit = true;
             //isRequestViewer = true;
             //mDMDCapture.stopCamera();
             //mDMDCapture.releaseShooter();
-            imgRotMode?.visibility = View.VISIBLE
-            txtLensName?.visibility = View.VISIBLE
+            imgRotMode!!.visibility = View.VISIBLE
+            txtLensName!!.visibility = View.VISIBLE
         }
 
         override fun onExposureChanged(mode: ExposureMode) {
-            // TODO: Auto-generated method stub
+            // TODO Auto-generated method stub
         }
 
-        //rotator
-        override fun onRotatorConnected() {}
-        override fun onRotatorDisconnected() {}
+        //rotaor
+        override fun onRotatorConnected() {
+            Log.e("rmh", "rot connected")
+            runOnUiThread { //                    txtRotConn.setBackgroundColor(Color.GREEN);
+                imgRotMode!!.setImageResource(R.drawable.rotator_conn)
+            }
+        }
+
+        override fun onRotatorDisconnected() {
+            Log.e("rmh", "rot disconnected")
+            runOnUiThread { //                    txtRotConn.setBackgroundColor(Color.RED);
+                if (isSDKRotator) imgRotMode!!.setImageResource(R.drawable.rotator_disconn)
+            }
+        }
+
         override fun onStartedRotating() {}
         override fun onFinishedRotating() {}
     }

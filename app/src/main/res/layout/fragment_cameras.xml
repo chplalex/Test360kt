@@ -22,6 +22,7 @@
             android:layout_height="75dp"
             android:background="@color/design_default_color_background"
             android:src="@drawable/ic_camera"
+            android:scaleType="fitXY"
             android:tooltipText="Simple" />
 
         <TextView
@@ -51,6 +52,7 @@
             android:layout_height="75dp"
             android:background="@color/design_default_color_background"
             android:src="@drawable/ic_camera"
+            android:scaleType="fitXY"
             android:tooltipText="Full"/>
 
         <TextView
@@ -80,6 +82,7 @@
             android:layout_height="75dp"
             android:background="@color/design_default_color_background"
             android:src="@drawable/pano"
+            android:scaleType="fitXY"
             android:tooltipText="Full"/>
 
         <TextView

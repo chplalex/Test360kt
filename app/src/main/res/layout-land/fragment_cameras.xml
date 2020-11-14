@@ -24,7 +24,8 @@
             android:layout_columnWeight="1"
             android:layout_gravity="fill"
             android:background="@color/design_default_color_background"
-            android:src="@drawable/ic_camera" />
+            android:src="@drawable/ic_camera"
+            android:scaleType="fitXY"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -46,7 +47,8 @@
             android:layout_columnWeight="1"
             android:layout_gravity="fill"
             android:background="@color/design_default_color_background"
-            android:src="@drawable/ic_camera" />
+            android:src="@drawable/ic_camera"
+            android:scaleType="fitXY"/>
 
         <ImageButton
             android:id="@+id/imgCamFull"
@@ -56,7 +58,8 @@
             android:layout_columnWeight="1"
             android:layout_gravity="fill"
             android:background="@color/design_default_color_background"
-            android:src="@drawable/ic_camera" />
+            android:src="@drawable/ic_camera"
+            android:scaleType="fitXY"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -78,7 +81,8 @@
             android:layout_columnWeight="1"
             android:layout_gravity="fill"
             android:background="@color/design_default_color_background"
-            android:src="@drawable/ic_camera" />
+            android:src="@drawable/ic_camera"
+            android:scaleType="fitXY"/>
 
         <ImageButton
             android:id="@+id/imgCameraPSDK"
@@ -88,7 +92,8 @@
             android:layout_columnWeight="1"
             android:layout_gravity="fill"
             android:background="@color/design_default_color_background"
-            android:src="@drawable/pano" />
+            android:src="@drawable/pano"
+            android:scaleType="fitXY"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -110,7 +115,8 @@
             android:layout_columnWeight="1"
             android:layout_gravity="fill"
             android:background="@color/design_default_color_background"
-            android:src="@drawable/pano" />
+            android:src="@drawable/pano"
+            android:scaleType="fitXY"/>
 
     </GridLayout>
 

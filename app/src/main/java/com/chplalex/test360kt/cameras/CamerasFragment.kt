@@ -44,7 +44,7 @@ class CamerasFragment : Fragment() {
     ): View? = inflater.inflate(
         R.layout.fragment_cameras,
         container,
-        false)?.also{
+        false)?.also{ it ->
 
         activity?.title = resources.getString(R.string.label_cameras)
 
