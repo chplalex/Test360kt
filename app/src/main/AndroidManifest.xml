@@ -45,7 +45,10 @@
         android:hardwareAccelerated="true"
         android:largeHeap="true">
 
-        <activity android:name="com.chplalex.Test360kt.main.MainActivity">
+        <activity
+            android:name=".main.MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/Theme.Test360kt">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -53,30 +56,30 @@
         </activity>
 
         <activity
-            android:name="com.chplalex.Test360kt.cameras.ImageActivity"
+            android:name=".cameras.ImageActivity"
             android:label="@string/title_activity_image"
-            android:theme="@style/Theme.Test360kt.NoActionBar"/>
+            android:theme="@style/Theme.Test360kt"/>
 
-        <activity android:name="com.chplalex.Test360kt.galleries.PanoramaActivity"
+        <activity android:name=".galleries.PanoramaActivity"
             android:label="@string/title_activity_panorama"
-            android:theme="@style/Theme.Test360kt.NoActionBar"/>
+            android:theme="@style/Theme.Test360kt"/>
 
-        <activity android:name="com.chplalex.Test360kt.cameras.ShooterActivity"
+        <activity android:name=".cameras.ShooterActivity"
             android:label="@string/title_activity_shooter"
-            android:theme="@style/Theme.Test360kt.NoActionBar"
+            android:theme="@style/Theme.Test360kt.NoTitle"
             android:configChanges="orientation"/>
 
-        <activity android:name="com.chplalex.Test360kt.cameras.ShooterActivity_pano"
+        <activity android:name=".cameras.ShooterActivity_pano"
             android:label="@string/title_activity_shooter"
-            android:theme="@style/Theme.Test360kt.NoActionBar"
+            android:theme="@style/Theme.Test360kt.NoTitle"
             android:configChanges="orientation"/>
 
         <activity
-            android:name="com.chplalex.Test360kt.cameras.LensesActivity"
+            android:name=".cameras.LensesActivity"
+            android:label="@string/title_activity_lenses"
+            android:theme="@style/Theme.Test360kt.NoTitle"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label=""
-            android:screenOrientation="sensor"
-            android:theme="@style/Theme.Test360kt.NoActionBar"/>
+            android:screenOrientation="sensor"/>
 
     </application>
 

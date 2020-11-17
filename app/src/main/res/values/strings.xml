@@ -5,9 +5,13 @@
     <string name="nav_header_title" translatable="false">TESTing</string>
     <string name="nav_header_subtitle" translatable="false">chepel.alexander@gmail.com</string>
     <string name="nav_header_desc" translatable="false">Navigation header</string>
-    <string name="title_activity_image" translatable="false">Activity Image</string>
+
+    <string name="title_activity_main" translatable="false">Activity Main</string>
     <string name="title_activity_panorama" translatable="false">Activity Panorama</string>
     <string name="title_activity_shooter">Activity PSDK Shooter</string>
+    <string name="title_activity_lenses">Activity PSDK Lenses</string>
+    <string name="title_activity_image">Activity Image</string>
+
     <string name="label_cameras">Камеры</string>
     <string name="label_gallery_internet">Галерея 360 из интернета</string>
     <string name="text_camera_simple">вызов внешней камеры\nв "ПРОСТОМ" режиме\nACTION_IMAGE_CAPTURE</string>

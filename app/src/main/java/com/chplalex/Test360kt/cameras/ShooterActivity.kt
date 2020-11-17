@@ -116,10 +116,7 @@ class ShooterActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
 
         if (SDK_INT < M) {
             onCreateSub()
@@ -319,8 +316,6 @@ class ShooterActivity : AppCompatActivity() {
         mDisplay.getMetrics(mDisplayMetrics)
         val mDisplayRotation = windowManager.defaultDisplay.rotation
 
-        //Full screen activity
-        //requestWindowFeature(Window.FEATURE_NO_TITLE);
         if (mDisplayRotation == Surface.ROTATION_0 || mDisplayRotation == Surface.ROTATION_180) {
             mScreenWidth = mDisplayMetrics.widthPixels
             mScreenHeight = mDisplayMetrics.heightPixels

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context="com.dermandar.test360kt.com.chplalex.test360kt.cameras.Lenses">
+    tools:context=".cameras.LensesActivity">
 
     <RelativeLayout
         android:id="@+id/mainLayout"

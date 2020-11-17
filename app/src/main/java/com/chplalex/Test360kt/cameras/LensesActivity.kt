@@ -1,17 +1,17 @@
 package com.chplalex.Test360kt.cameras
 
-import android.app.Activity
 import android.os.Bundle
-import android.view.WindowManager
 import android.widget.RelativeLayout
 import android.widget.TextView
 import android.content.Intent
 import android.graphics.Color
 import android.view.View
 import android.view.Window
+import android.view.WindowManager
+import androidx.appcompat.app.AppCompatActivity
 import com.chplalex.Test360kt.R
 
-class LensesActivity : Activity() {
+class LensesActivity : AppCompatActivity() {
 
     var currentSelectedLens: View? = null
     var selectedColor = Color.rgb(217, 217, 217)
@@ -22,27 +22,31 @@ class LensesActivity : Activity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         requestWindowFeature(Window.FEATURE_NO_TITLE)
-        window.setFlags(
-            WindowManager.LayoutParams.FLAG_FULLSCREEN,
-            WindowManager.LayoutParams.FLAG_FULLSCREEN
-        )
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+
         setContentView(R.layout.activity_lenses)
+
         val lens = findViewById<View>(R.id.none) as RelativeLayout
         lens.setOnClickListener { v -> selectLens(v) }
+
         val txtCancel = findViewById<View>(R.id.cancel) as TextView
         txtCancel.setOnClickListener { finish() }
+
         val txtDone = findViewById<View>(R.id.done) as TextView
         txtDone.setOnClickListener {
             val pref = applicationContext.getSharedPreferences("MyPref", MODE_PRIVATE)
             val editor = pref.edit()
             editor.putString(prefLensKey, selectedLensId)
             editor.putString(prefLensNameKey, selectedLensName)
-            editor.commit()
+            editor.apply()
+
             val data = Intent()
             data.putExtra("lensId", selectedLensId)
             data.putExtra("lensName", selectedLensName)
             setResult(RESULT_OK, data)
+
             finish()
         }
         selectedLensId = intent.getStringExtra("CurrentLens")
