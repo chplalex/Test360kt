@@ -15,7 +15,7 @@
         <!-- Customize your theme here. -->
     </style>
 
-    <style name="Theme.Test360kt.NoTitle" parent="Theme.Test360kt">
+    <style name="Theme.Test360kt.NoTitle">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
