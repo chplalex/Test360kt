@@ -35,6 +35,6 @@
         tools:layout="@layout/activity_panorama"/>
     <activity
         android:id="@+id/shooterActivity"
-        android:name="com.chplalex.Test360kt.cameras.ShooterActivity"
+        android:name="com.chplalex.Test360kt.cameras.PanoShooterActivity"
         android:label="ShooterActivity" />
 </navigation>

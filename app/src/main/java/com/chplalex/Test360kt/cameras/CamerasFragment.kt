@@ -1,8 +1,10 @@
 package com.chplalex.Test360kt.cameras
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -11,7 +13,12 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider.getUriForFile
+import androidx.fragment.app.FragmentActivity
 import com.chplalex.Test360kt.R
+import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
 
 private const val CAMERA_REQUEST = 4747
 
@@ -44,34 +51,92 @@ class CamerasFragment : Fragment() {
     ): View? = inflater.inflate(
         R.layout.fragment_cameras,
         container,
-        false)?.also{ it ->
+        false
+    )?.also { it ->
 
         activity?.title = resources.getString(R.string.label_cameras)
 
         it.findViewById<ImageButton>(R.id.imgCamSimple)?.setOnClickListener {
-            Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { startActivityForResult(it, CAMERA_REQUEST) }
+            Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
+                startActivityForResult(
+                    it,
+                    CAMERA_REQUEST
+                )
+            }
         }
 
         it.findViewById<ImageButton>(R.id.imgCamSimpleRight)?.setOnClickListener {
-            Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { startActivityForResult(it, CAMERA_REQUEST) }
+            Intent(MediaStore.ACTION_IMAGE_CAPTURE).also {
+                startActivityForResult(
+                    it,
+                    CAMERA_REQUEST
+                )
+            }
         }
 
         it.findViewById<ImageButton>(R.id.imgCamFull)?.setOnClickListener {
-            Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA).also { startActivityForResult(it, CAMERA_REQUEST) }
+            Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA).also {
+                startActivityForResult(
+                    it,
+                    CAMERA_REQUEST
+                )
+            }
         }
 
         it.findViewById<ImageButton>(R.id.imgCamFullRight)?.setOnClickListener {
-            Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA).also { startActivityForResult(it, CAMERA_REQUEST) }
+            Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA).also {
+                startActivityForResult(
+                    it,
+                    CAMERA_REQUEST
+                )
+            }
         }
 
         it.findViewById<ImageButton>(R.id.imgCameraPSDK)?.setOnClickListener {
-            ShooterActivity.start(it.context)
+            //val panoFileName = getNewPanoFileName()
+            //PanoShooterActivity.start(it.context, panoFileName)
+            // точка входа в основном приложении
+            openCameraPano(activity)
         }
 
         it.findViewById<ImageButton>(R.id.imgCameraPSDKRight)?.setOnClickListener {
-            ShooterActivity.start(it.context)
+            PanoShooterActivity.start(it.context)
         }
 
+    }
+
+    private fun openCameraPano(activity: FragmentActivity) {
+        val takePictureIntent = Intent(activity, PanoShooterActivity::class.java)
+
+        var panoFile: File? = null
+        try {
+            panoFile = createImageFile(activity)
+        } catch (exception: IOException) {
+            //Timber.e(exception)
+            Toast.makeText(context, "Ошибка создания файла")
+        }
+
+        if (panoFile != null) {
+            val photoURI = getUriForFile(activity, panoFile)
+            grantUriPermission(activity, takePictureIntent, photoURI)
+
+            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+            activity.startActivityForResult(takePictureIntent, REQUEST_CODE_CAMERA)
+
+            tempImageFilePath = panoFile.absolutePath
+        } else {
+            exceptionSubject.onNext(Unit)
+            notificator.show(R.string.error_open_camera)
+        }
+    }
+
+
+    private fun createImageFile(context: Context): File {
+        val TEMP_IMAGE_DATE_FORMAT = "yyyyMMdd_HHmmss"
+        val timeStamp = SimpleDateFormat(TEMP_IMAGE_DATE_FORMAT).format(System.currentTimeMillis())
+        val imageFileName = "JPEG_${timeStamp}_"
+        val storageDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(imageFileName, ".jpg", storageDir)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

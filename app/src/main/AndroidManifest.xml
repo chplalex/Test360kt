@@ -64,12 +64,12 @@
             android:label="@string/title_activity_panorama"
             android:theme="@style/Theme.Test360kt"/>
 
-        <activity android:name=".cameras.ShooterActivity"
+        <activity android:name=".cameras.PanoShooterActivity"
             android:label="@string/title_activity_shooter"
             android:theme="@style/Theme.Test360kt.NoTitle"
             android:configChanges="orientation"/>
 
-        <activity android:name=".cameras.ShooterActivity_pano"
+        <activity android:name=".cameras.save.ShooterActivity_pano"
             android:label="@string/title_activity_shooter"
             android:theme="@style/Theme.Test360kt.NoTitle"
             android:configChanges="orientation"/>
