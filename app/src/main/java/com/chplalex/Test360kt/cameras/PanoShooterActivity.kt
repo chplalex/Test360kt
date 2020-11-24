@@ -30,8 +30,6 @@ import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.chplalex.Test360kt.R
-import com.chplalex.Test360kt.galleries.PanoramaActivity
-import com.chplalex.Test360kt.galleries.SourceData
 import com.chplalex.Test360kt.utils.TAG
 import com.dermandar.dmd_lib.CallbackInterfaceShooter
 import com.dermandar.dmd_lib.DMD_Capture
@@ -47,6 +45,8 @@ class PanoShooterActivity : AppCompatActivity() {
                 putExtra(MediaStore.EXTRA_OUTPUT, panoUri)
                 context.startActivity(this)
             }
+
+        const val PANO_SHOOTER_RESULT_PATH = "PANO_SHOOTER_RESULT_PATH"
 
         //Permissions
         private const val MY_PERMISSIONS_REQUEST_LOCATION = 1
@@ -158,7 +158,7 @@ class PanoShooterActivity : AppCompatActivity() {
         permissions: Array<out String>,
         grantResults: IntArray
     ) {
-        Log.d(TAG, "onRequestPermissionsResult main")
+        Log.e(TAG, "onRequestPermissionsResult() main")
 
         if ((requestCode != MY_PERMISSIONS_REQUEST_CAMERA) &&
             (requestCode != MY_PERMISSIONS_REQUEST_STORAGE) &&
@@ -252,7 +252,7 @@ class PanoShooterActivity : AppCompatActivity() {
     private fun onCreateSub() {
         var lp: RelativeLayout.LayoutParams
 
-        Log.d(TAG, "oncreatesub")
+        Log.e(TAG, "onCreateSub()")
 
         //validate location on
         if (!locationAsked) {
@@ -482,7 +482,7 @@ class PanoShooterActivity : AppCompatActivity() {
     }
 
     override fun onPause() {
-        Log.d(TAG, "onPause")
+        Log.e(TAG, "onPause()")
 
         super.onPause()
 
@@ -498,14 +498,14 @@ class PanoShooterActivity : AppCompatActivity() {
     }
 
     override fun onResume() {
-        Log.d(TAG, "on resume")
+        Log.e(TAG, "onResume()")
 
         super.onResume()
 
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         mDMDCapture?.apply {
-            Log.d(TAG, "onResume::startCamera")
+            Log.e(TAG, "onResume() -> startCamera()")
             startCamera(this@PanoShooterActivity, mWidth, mHeight)
             //mDMDCapture.setContinuousShooting(true);
         }
@@ -516,7 +516,7 @@ class PanoShooterActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        Log.d(TAG, "onBackPressed")
+        Log.e(TAG, "onBackPressed()")
         if (mIsShootingStarted) {
             mDMDCapture?.stopShooting()
             mIsShootingStarted = false
@@ -530,7 +530,7 @@ class PanoShooterActivity : AppCompatActivity() {
     }
 
     private fun startShooter() {
-        Log.d(TAG, "startShooter")
+        Log.e(TAG, "startShooter()")
 
         isRequestViewer = false
 
@@ -540,8 +540,10 @@ class PanoShooterActivity : AppCompatActivity() {
             if (saveOri) setExportOriOn()
 
             setCircleDetectionCallback { res ->
+                Log.e("TAG", "circleDetectionCallback(), result detection:$res")
+
                 val x: detectResult = detectResult.values().get(res)
-                Log.d("TAG", "result detection:$res")
+
                 if (x == detectResult.DMDCircleDetectionInvalidInput) {
                     toastMessage("Что-то с линзами пошло не так...")
                 } else if (x == detectResult.DMDCircleDetectionCircleNotFound) {
@@ -561,7 +563,7 @@ class PanoShooterActivity : AppCompatActivity() {
 
         viewGroup = mDMDCapture?.initShooter(this, mCallbackInterface, windowManager.defaultDisplay.rotation, true, true)
 
-        mRelativeLayout!!.addView(viewGroup, 0)
+        mRelativeLayout?.addView(viewGroup, 0)
 
         viewGroup?.setOnClickListener(View.OnClickListener {
             if (!mIsCameraReady) return@OnClickListener
@@ -611,7 +613,7 @@ class PanoShooterActivity : AppCompatActivity() {
                 activityH = height.toFloat()
             }
 
-            Log.d(TAG, "dim:" + dim[0] + " " + dim[1])
+            Log.e(TAG, "drawCircle(), dim:" + dim[0] + " " + dim[1])
 
             val marginLeft: Int
             val marginRight: Int
@@ -629,7 +631,7 @@ class PanoShooterActivity : AppCompatActivity() {
 
             circlediameter = circleValues[4]
 
-            Log.d(TAG, "mars: $marginLeft $marginRight $marginTop $marginBottom")
+            Log.e(TAG, "drawCircle(), mars: $marginLeft $marginRight $marginTop $marginBottom")
 
             circle?.apply {
                 setImageResource(_resId)
@@ -661,13 +663,17 @@ class PanoShooterActivity : AppCompatActivity() {
         override fun onFinishClear() {}
 
         override fun onFinishRelease() {
-            mRelativeLayout!!.removeView(viewGroup)
+            Log.e(TAG, "onFinishRelease(), isRequestExit = $isRequestExit")
+
+            mRelativeLayout?.removeView(viewGroup)
             viewGroup = null
+
             if (isRequestExit) {
                 finish()
                 return
             }
-            mDMDCapture!!.startCamera(this@PanoShooterActivity, mWidth, mHeight)
+
+            mDMDCapture?.startCamera(this@PanoShooterActivity, mWidth, mHeight)
         }
 
         override fun onDirectionUpdated(a: Float) {}
@@ -680,6 +686,9 @@ class PanoShooterActivity : AppCompatActivity() {
         override fun shotTakenPreviewReady(bitmapPreview: Bitmap) {}
         override fun photoTaken() {
             mNumberTakenImages++
+
+            Log.e(TAG, "photoTaken(), mNumberTakenImages = $mNumberTakenImages")
+
             if (mNumberTakenImages <= 0) {
                 setInstructionMessage(R.string.tap_anywhere_to_start)
             } else if (mNumberTakenImages == 1) {
@@ -690,7 +699,10 @@ class PanoShooterActivity : AppCompatActivity() {
         }
 
         override fun stitchingCompleted(info: HashMap<String, Any>) {
-            Log.d(TAG, "decode logo")
+            Log.e(TAG, "stitchingCompleted()")
+            for (entry in info) {
+                Log.e(TAG, "info.entry = $entry")
+            }
 
             val op = BitmapFactory.Options()
             op.inPreferredConfig = Bitmap.Config.ARGB_8888
@@ -704,15 +716,17 @@ class PanoShooterActivity : AppCompatActivity() {
                 // val res = setLogo(bytes, min_zenith, min_nadir)
 
                 // to use  default logo (DMD logo).
+                Log.e(TAG, "stitchingCompleted() -> setLogo()")
                 val res = setLogo(null, min_zenith, min_nadir)
-                Log.d(TAG, "logo set finished: $res")
+                Log.e(TAG, "stitchingCompleted(), setLogo() finished, res = $res")
 
+                Log.e(TAG, "stitchingCompleted() -> genEquiAt()")
                 genEquiAt(panoFilePath, 800, 0, 0, false, false)
             }
         }
 
         override fun shootingCompleted(finished: Boolean) {
-            Log.d(TAG, "shootingCompleted: $finished")
+            Log.e(TAG, "shootingCompleted(), finished = $finished")
             if (finished) {
                 mDMDCapture?.stopCamera()
             }
@@ -728,42 +742,41 @@ class PanoShooterActivity : AppCompatActivity() {
         }
 
         override fun compassEvent(info: HashMap<String, Any>) {
-            Toast.makeText(this@PanoShooterActivity, "Compass interference", Toast.LENGTH_SHORT).show()
+            Log.e(TAG, "compassEvent(), info:")
+            for (entry in info) {
+                Log.e(TAG, "entry = $entry")
+            }
             mIsShootingStarted = false
         }
 
         override fun onFinishGeneratingEqui() {
-            Log.e("rmh", "onFinishGeneratingEqui")
+            Log.e(TAG, "onFinishGeneratingEqui(), panoFilePath = $panoFilePath")
+
+            val resultIntent = Intent().apply { putExtra(PANO_SHOOTER_RESULT_PATH, panoFilePath) }
+            setResult(RESULT_OK, resultIntent)
+
             mIsShootingStarted = false
-
-            //mDMDCapture!!.startCamera(applicationContext, mWidth, mHeight)
-            Toast.makeText(this@PanoShooterActivity, "Image saved to $mEquiPath", Toast.LENGTH_LONG).show()
-            PanoramaActivity.start(this@PanoShooterActivity, SourceData("Свежее фото", mEquiPath))
-
-            //isRequestExit = true;
-            //isRequestViewer = true;
-            //mDMDCapture.stopCamera();
-            //mDMDCapture.releaseShooter();
-            imgRotMode!!.visibility = View.VISIBLE
-            txtLensName!!.visibility = View.VISIBLE
+            isRequestExit = true
+            isRequestViewer = false
+            mDMDCapture?.releaseShooter()
         }
 
         override fun onExposureChanged(mode: ExposureMode) {
             // TODO Auto-generated method stub
         }
 
-        //rotaor
+        //rotator
         override fun onRotatorConnected() {
-            Log.e("rmh", "rot connected")
-            runOnUiThread { //                    txtRotConn.setBackgroundColor(Color.GREEN);
-                imgRotMode!!.setImageResource(R.drawable.rotator_conn)
+            Log.e(TAG, "onRotatorConnected()")
+            runOnUiThread {
+                imgRotMode?.setImageResource(R.drawable.rotator_conn)
             }
         }
 
         override fun onRotatorDisconnected() {
-            Log.e("rmh", "rot disconnected")
-            runOnUiThread { //                    txtRotConn.setBackgroundColor(Color.RED);
-                if (isSDKRotator) imgRotMode!!.setImageResource(R.drawable.rotator_disconn)
+            Log.e(TAG, "onRotatorDisconnected()")
+            runOnUiThread {
+                if (isSDKRotator) imgRotMode?.setImageResource(R.drawable.rotator_disconn)
             }
         }
 

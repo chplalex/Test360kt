@@ -18,8 +18,8 @@
 
         <ImageButton
             android:id="@+id/imgCamSimple"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="@color/design_default_color_background"
             android:src="@drawable/ic_camera"
             android:scaleType="fitXY"
@@ -44,12 +44,12 @@
         app:layout_constraintTop_toBottomOf="@+id/groupCameraSimple"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/groupCameraPSDK">
+        app:layout_constraintBottom_toTopOf="@id/groupCameraPSDKSave">
 
         <ImageButton
             android:id="@+id/imgCamFull"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="@color/design_default_color_background"
             android:src="@drawable/ic_camera"
             android:scaleType="fitXY"
@@ -66,7 +66,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/groupCameraPSDK"
+        android:id="@+id/groupCameraPSDKSave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
@@ -74,12 +74,42 @@
         app:layout_constraintTop_toBottomOf="@+id/groupCameraFull"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/groupCameraPSDK">
+
+        <ImageButton
+            android:id="@+id/imgCameraPSDKSave"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@color/design_default_color_background"
+            android:src="@drawable/pano"
+            android:scaleType="fitXY"
+            android:tooltipText="Full"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/text_camera_panorama_sdk_save"
+            android:textAlignment="center"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/groupCameraPSDK"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/groupCameraPSDKSave"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <ImageButton
             android:id="@+id/imgCameraPSDK"
-            android:layout_width="75dp"
-            android:layout_height="75dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
             android:background="@color/design_default_color_background"
             android:src="@drawable/pano"
             android:scaleType="fitXY"

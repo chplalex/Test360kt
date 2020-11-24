@@ -768,10 +768,10 @@ class ShooterActivity_save : AppCompatActivity() {
             op.inPreferredConfig = Bitmap.Config.ARGB_8888
             val bmp = BitmapFactory.decodeResource(resources, R.drawable.logo, op)
             val bytes = DMDBitmapToRGBA888.imageToRGBA8888(bmp)
-            val min_zenith = 0f //specifies the size of the top logo between 0..90 degrees, otherwise it is set to 0
-            val min_nadir = 0f //specifies the size of the bottom logo between 0..90 degrees, otherwise it is set to 0
-            val res = mDMDCapture!!.setLogo(bytes, min_zenith, min_nadir)
-            //int res = mDMDCapture.setLogo(null,min_zenith,min_nadir);  // to use  default logo (DMD logo).
+            val min_zenith = 45f //specifies the size of the top logo between 0..90 degrees, otherwise it is set to 0
+            val min_nadir = 45f //specifies the size of the bottom logo between 0..90 degrees, otherwise it is set to 0
+            //val res = mDMDCapture!!.setLogo(bytes, min_zenith, min_nadir) // to use custom logo
+            val res = mDMDCapture?.setLogo(null, min_zenith, min_nadir)  // to use  default logo (DMD logo).
             Log.e("AMS", "logo set finished: $res")
             mDMDCapture!!.genEquiAt(mEquiPath, 800, 0, 0, false, false)
             //mDMDCapture.releaseShooter();
