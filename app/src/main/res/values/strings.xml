@@ -21,7 +21,7 @@
 
     <string name="hold_the_device_vertically">Выровняйте устройство</string>
     <string name="rotate_left_or_right_or_tap_to_restart">Вращайте влево или вправо или коснитесь для рестарта</string>
-    <string name="tap_to_finish_when_ready_or_continue_rotating">Коснитесь, чтобы закончить, или продолжайте вращение</string>
+    <string name="tap_to_finish_when_ready_or_continue_rotating">Продолжайте вращение или коснитесь, чтобы закончить</string>
     <string name="tap_anywhere_to_start">Коснитесь, чтобы начать</string>
     <string name="permission_title">Недостаточно прав</string>
     <string name="permission_message">Вы готовы предоставить необходимые права для работы приложения?</string>
@@ -89,5 +89,7 @@
     <string name="label_gallery_pano">Галерея 360 на устройстве</string>
     <string name="text_camera_panorama_sdk_save">вызов SAVE камеры\nPANORAMA SDK</string>
     <string name="no_lenses">Линз нет</string>
+    <string name="cont_descr_image_view_circle">Image View Circle</string>
+    <string name="cont_descr_image_view_rotator">Image View Rotator</string>
 
 </resources>
