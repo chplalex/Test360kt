@@ -88,5 +88,6 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="label_gallery_pano">Галерея 360 на устройстве</string>
     <string name="text_camera_panorama_sdk_save">вызов SAVE камеры\nPANORAMA SDK</string>
+    <string name="no_lenses">Линз нет</string>
 
 </resources>

@@ -24,7 +24,6 @@ import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
 import android.view.View.*
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.*
 import androidx.annotation.RequiresApi
@@ -35,7 +34,9 @@ import com.dermandar.dmd_lib.CallbackInterfaceShooter
 import com.dermandar.dmd_lib.DMD_Capture
 import com.dermandar.dmd_lib.DMD_Capture.ExposureMode
 import com.nativesystem.Core
+import kotlinx.android.synthetic.main.activity_shooter.*
 import java.util.*
+import kotlin.math.roundToInt
 
 class PanoShooterActivity : AppCompatActivity() {
 
@@ -53,8 +54,9 @@ class PanoShooterActivity : AppCompatActivity() {
         private const val MY_PERMISSIONS_REQUEST_CAMERA = 2
         private const val MY_PERMISSIONS_REQUEST_STORAGE = 3
 
-        var locationAsked = false
-        private const val SP_NAME = "Test360kt"
+        private var locationAsked = false
+        private lateinit var mPrefName: String
+        private const val REQUEST_CODE_LENSES = 103
     }
 
     internal enum class detectResult {
@@ -65,46 +67,30 @@ class PanoShooterActivity : AppCompatActivity() {
     }
 
     private var IS_HD = false
-    private val drawcircle = true
-    private var mRelativeLayout: RelativeLayout? = null
     private var mWidth = 0
     private var mHeight = 0
     private var mDMDCapture: DMD_Capture? = null
     private var mIsShootingStarted = false
     private var mIsCameraReady = false
-    private var mScreenWidth = 0
-    private var mScreenHeight = 0
-    private var mAspectRatio = 0.0
-    private var circle: ImageView? = null
-    private var viewGroup: ViewGroup? = null
+    private var mViewGroup: ViewGroup? = null
     private var saveOri = true
     private var mDisplayRotation = 0
-    private val request_Code = 103
     private var prefModeKey = "ShotMode"
     private var prefLensKey = "LensSelected"
     private var prefLensNameKey = "LensSelectedName"
     private var selectedLens: String? = "none"
     private var lensName: String? = "None"
-    private var txtLensName: TextView? = null
-    private var txtShootMode: Button? = null
-    private var imgRotMode: ImageView? = null
-    private var showYinYang = true
-    //used in case when permissions are asked or bluetooth to turn on i requested (onresume is entered before on create sub)
-    private val camAdded = false
     private var lensIDRotator = 0
     private var isSDKRotator = false
     private var mNumberTakenImages = 0
     private var mCurrentInstructionMessageID = -1
-    private var mTextViewInstruction: TextView? = null
     private lateinit var panoFilePath: String
-    private val mIsOpenGallery = false
 
     //Button startShooting;
     private var FL = 0.0
     private var activityW = 0f
     private var activityH = 0f
     private var isRequestExit = false
-    private var isRequestViewer = false
 
     internal enum class fisheye {
         none
@@ -112,6 +98,7 @@ class PanoShooterActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        mPrefName = applicationContext.packageName
 
         window.decorView.systemUiVisibility = SYSTEM_UI_FLAG_FULLSCREEN
         requestWindowFeature(Window.FEATURE_NO_TITLE)
@@ -236,43 +223,45 @@ class PanoShooterActivity : AppCompatActivity() {
         MY_PERMISSIONS_REQUEST_LOCATION
     )
 
-    private fun grantResultsOk(grantResults: IntArray, paramCount: Int): Boolean {
-        var result = false
-        for (r in grantResults) {
-            result = result && (r == PERMISSION_GRANTED)
-        }
-        return result && (grantResults.size == paramCount)
-    }
-
-    private fun toastMessage(msg: String) {
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-    }
-
     // необходимые права имеются. работаем дальше.
     private fun onCreateSub() {
-        var lp: RelativeLayout.LayoutParams
-
         Log.e(TAG, "onCreateSub()")
 
+        initLocationMode()
+        initShootMode()
+        mDisplayRotation = windowManager.defaultDisplay.rotation
+        initRequestedOrientation()
+        setContentView(R.layout.activity_shooter)
+        initDimensions()
+        startShooter()
+        setInstructionMessage(R.string.tap_anywhere_to_start)
+        initLenses()
+        initRotatorMode()
+
+        //TODO: что-то с этим сделать
+        imageViewCircle.alpha = 0.3f
+    }
+
+    private fun initLocationMode() {
         //validate location on
         if (!locationAsked) {
             val lm = getSystemService(LOCATION_SERVICE) as LocationManager
-            var gps_enabled = false
-            var network_enabled = false
+            var gpsEnabled = false
+            var networkEnabled = false
 
             try {
-                gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
             } catch (ex: Exception) {
                 toastMessage("GPS locating isn't enabled")
             }
 
             try {
-                network_enabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+                networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
             } catch (ex: Exception) {
                 toastMessage("Network locating isn't enabled")
             }
 
-            if (!gps_enabled && !network_enabled) {
+            if (!gpsEnabled && !networkEnabled) {
                 // notify user
                 AlertDialog.Builder(this)
                     .setMessage("Your GPS is turned off, you may need to turn it on to connect to the Bluetooth rotator")
@@ -286,25 +275,12 @@ class PanoShooterActivity : AppCompatActivity() {
             }
         }
         //end validate location on
+    }
 
-        val pref = getSharedPreferences(SP_NAME, MODE_PRIVATE)
+    private fun initRequestedOrientation() {
+        var mScreenWidth = 0
+        var mScreenHeight = 0
 
-        val lastShootMode = pref.getString(prefModeKey, "")
-        if (lastShootMode == "")
-            pref.edit().apply {
-                if (isSDKRotator)
-                    putString(prefModeKey, "rotator")
-                else
-                    putString(prefModeKey, "hand")
-                apply()
-            }
-        else
-            isSDKRotator = (lastShootMode == "rotator")
-
-        //mDisplayMetrics = DisplayMetrics()
-        mDisplayRotation = windowManager.defaultDisplay.rotation
-
-        //getting screen resolution
         val mDisplay = windowManager.defaultDisplay
         val mDisplayMetrics = DisplayMetrics()
         mDisplay.getMetrics(mDisplayMetrics)
@@ -318,78 +294,51 @@ class PanoShooterActivity : AppCompatActivity() {
             mScreenHeight = mDisplayMetrics.widthPixels
         }
 
-        mAspectRatio = mScreenHeight.toDouble() / mScreenWidth.toDouble()
+        val mAspectRatio = mScreenHeight.toDouble() / mScreenWidth.toDouble()
 
         requestedOrientation = if (mAspectRatio < 1.0)
             ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
         else
             ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    }
 
-        setContentView(R.layout.activity_shooter)
-
-        mRelativeLayout = findViewById<View>(R.id.relativeLayout) as RelativeLayout
-
+    private fun initDimensions() {
         val display = windowManager.defaultDisplay
         val displayMetrics = DisplayMetrics()
         display.getMetrics(displayMetrics)
         mWidth = displayMetrics.widthPixels
         mHeight = displayMetrics.heightPixels
+    }
 
-        startShooter()
+    private fun initShootMode() {
+        val pref = getSharedPreferences(mPrefName, MODE_PRIVATE)
+        val lastShootMode = pref.getString(prefModeKey, "")
+        if (lastShootMode == "")
+            pref.edit().apply {
+                if (isSDKRotator)
+                    putString(prefModeKey, "rotator")
+                else
+                    putString(prefModeKey, "hand")
+                apply()
+            }
+        else
+            isSDKRotator = (lastShootMode == "rotator")
+    }
 
-        //Text View instruction
-        mTextViewInstruction = TextView(this).apply {
-            textSize = 32f
-            gravity = Gravity.CENTER
-            setTextColor(Color.WHITE)
-        }
-        setInstructionMessage(R.string.tap_anywhere_to_start)
-        mRelativeLayout?.addView(
-            mTextViewInstruction,
-            RelativeLayout.LayoutParams(MATCH_PARENT, MATCH_PARENT)
-        )
-
-        //circle
-        val displaymetrics = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(displaymetrics)
-        circle = ImageView(this).apply {
-            alpha = 0.3f
-        }
-        if (drawcircle) mRelativeLayout?.addView(circle)
-
+    private fun initLenses() {
         val shape = GradientDrawable().apply {
             cornerRadius = 50f
             setColor(Color.parseColor("#88a8a8a8"))
         }
-
-        txtLensName = TextView(this).apply {
-            textSize = 16f
-            gravity = Gravity.CENTER
-            setTextColor(Color.BLACK)
-            setPadding(20, 20, 20, 20)
-            background = shape
-
-            setOnClickListener {
-                if (mIsShootingStarted) return@setOnClickListener
-                //  if(mDMDCapture.canShootHDR())
-                //  mDMDCapture.setHDRStatus(false);
-                val intent = Intent(this@PanoShooterActivity, LensesActivity::class.java).apply {
-                    putExtra("CurrentLens", selectedLens)
-                }
-                startActivityForResult(intent, request_Code)
-            }
+        textViewLensName.background = shape
+        textViewLensName.setOnClickListener {
+            if (mIsShootingStarted) return@setOnClickListener
+            val intent = Intent(this@PanoShooterActivity, LensesActivity::class.java)
+            intent.putExtra("CurrentLens", selectedLens)
+            startActivityForResult(intent, REQUEST_CODE_LENSES)
         }
 
-        // You might want to tweak these to WRAP_CONTENT
-        lp = RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
-            addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-            addRule(RelativeLayout.ALIGN_PARENT_RIGHT)
-            bottomMargin = 200
-            rightMargin = 20
-        }
-
-        mRelativeLayout?.addView(txtLensName, lp)
-
+        val pref = getSharedPreferences(mPrefName, MODE_PRIVATE)
         val lastUsedLense = pref.getString(prefLensKey, "none")
         if (lastUsedLense == "") {
             pref.edit().apply {
@@ -401,30 +350,37 @@ class PanoShooterActivity : AppCompatActivity() {
             lensName = pref.getString(prefLensNameKey, "Линз нет")
         }
 
-        imgRotMode = ImageView(this).apply {
-            if (isSDKRotator)
-                setImageResource(R.drawable.rotator_disconn)
-            else
-                setImageResource(R.drawable.handheld)
-            //imgRotMode.setBackgroundColor(Color.WHITE);
+        setNewLens(getLensNb(selectedLens))
+
+        mDMDCapture?.apply {
+            setLensSelected(selectedLens != "none")
+            FL = fl
         }
+    }
 
-        // You might want to tweak these to WRAP_CONTENT
-        lp = RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
-            addRule(RelativeLayout.ALIGN_PARENT_BOTTOM)
-            addRule(RelativeLayout.ALIGN_PARENT_LEFT)
-            bottomMargin = 200
-            leftMargin = 70
-        }
+    fun getLensNb(lensName: String?): Int {
+        return fisheye.valueOf(lensName!!).ordinal
+    }
 
-        mRelativeLayout?.addView(imgRotMode, lp)
+    fun setNewLens(lensId: Int) {
+        textViewLensName.text = lensName
+        lensIDRotator = lensId
+        mDMDCapture?.setLens(lensId)
+    }
 
-        imgRotMode?.setOnClickListener {
+    private fun initRotatorMode() = imageViewRotator.apply {
+        if (isSDKRotator)
+            setImageResource(R.drawable.rotator_disconn)
+        else
+            setImageResource(R.drawable.handheld)
+
+        setOnClickListener {
 
             if (mDMDCapture == null) return@setOnClickListener
 
             isSDKRotator = !isSDKRotator
 
+            val pref = getSharedPreferences(mPrefName, MODE_PRIVATE)
             pref.edit().apply {
                 if (isSDKRotator)
                     putString(prefModeKey, "rotator")
@@ -434,9 +390,9 @@ class PanoShooterActivity : AppCompatActivity() {
             }
 
             if (isSDKRotator)
-                imgRotMode?.setImageResource(R.drawable.rotator_disconn)
+                setImageResource(R.drawable.rotator_disconn)
             else
-                imgRotMode?.setImageResource(R.drawable.handheld)
+                setImageResource(R.drawable.handheld)
 
             mDMDCapture?.prepareFlipMode(isSDKRotator)
 
@@ -453,32 +409,14 @@ class PanoShooterActivity : AppCompatActivity() {
                 show()
             }
 
-            imgRotMode?.isEnabled = false
+            isEnabled = false
 
             Handler().postDelayed({
                 progress.dismiss()
-                imgRotMode?.isEnabled = true
+                isEnabled = true
             }, 2000)
             // end solve fast switch issue
         }
-
-        //setStartShootingHand();
-        mDMDCapture?.apply {
-            setLensSelected(selectedLens != "none")
-            FL = fl
-        }
-
-        setNewLens(getLensNb(selectedLens))
-    }
-
-    fun getLensNb(selectedLens: String?): Int {
-        return fisheye.valueOf(selectedLens!!).ordinal
-    }
-
-    fun setNewLens(lensId: Int) {
-        txtLensName?.text = lensName
-        lensIDRotator = lensId
-        mDMDCapture?.setLens(lensId)
     }
 
     override fun onPause() {
@@ -490,9 +428,11 @@ class PanoShooterActivity : AppCompatActivity() {
 
         mDMDCapture?.apply {
             if (mIsShootingStarted) {
+                Log.e(TAG, "onPause() -> stopShooting()")
                 stopShooting()
                 mIsShootingStarted = false
             }
+            Log.e(TAG, "onPause() -> stopCamera()")
             stopCamera()
         }
     }
@@ -507,12 +447,11 @@ class PanoShooterActivity : AppCompatActivity() {
         mDMDCapture?.apply {
             Log.e(TAG, "onResume() -> startCamera()")
             startCamera(this@PanoShooterActivity, mWidth, mHeight)
-            //mDMDCapture.setContinuousShooting(true);
         }
 
-        mTextViewInstruction?.visibility = VISIBLE
-        imgRotMode?.visibility = VISIBLE
-        txtLensName?.visibility = VISIBLE
+        textViewInstruction.visibility = VISIBLE
+        imageViewRotator.visibility = VISIBLE
+        textViewLensName.visibility = VISIBLE
     }
 
     override fun onBackPressed() {
@@ -520,11 +459,10 @@ class PanoShooterActivity : AppCompatActivity() {
         if (mIsShootingStarted) {
             mDMDCapture?.stopShooting()
             mIsShootingStarted = false
-            imgRotMode?.visibility = VISIBLE
-            txtLensName?.visibility = VISIBLE
+            imageViewRotator.visibility = VISIBLE
+            textViewLensName.visibility = VISIBLE
         } else {
             isRequestExit = true
-            isRequestViewer = false
             mDMDCapture?.releaseShooter()
         }
     }
@@ -532,9 +470,12 @@ class PanoShooterActivity : AppCompatActivity() {
     private fun startShooter() {
         Log.e(TAG, "startShooter()")
 
-        isRequestViewer = false
+        initDMDCaptute()
+        initViewGroup()
+    }
 
-        mDMDCapture = DMD_Capture().apply{
+    private fun initDMDCaptute() {
+        mDMDCapture = DMD_Capture().apply {
             setRotatorMode(isSDKRotator)
 
             if (saveOri) setExportOriOn()
@@ -560,91 +501,77 @@ class PanoShooterActivity : AppCompatActivity() {
                 IS_HD = true
             }
         }
+    }
 
-        viewGroup = mDMDCapture?.initShooter(this, mCallbackInterface, windowManager.defaultDisplay.rotation, true, true)
+    private fun initViewGroup() {
+        mViewGroup = mDMDCapture?.initShooter(
+            this,
+            mCallbackInterface,
+            windowManager.defaultDisplay.rotation,
+            true,
+            true
+        )
 
-        mRelativeLayout?.addView(viewGroup, 0)
-
-        viewGroup?.setOnClickListener(View.OnClickListener {
+        mViewGroup?.setOnClickListener(View.OnClickListener {
             if (!mIsCameraReady) return@OnClickListener
 
             if (mIsShootingStarted) {
                 mDMDCapture?.finishShooting()
                 mIsShootingStarted = false
-                imgRotMode?.visibility = VISIBLE
-                txtLensName?.visibility = VISIBLE
+                imageViewRotator.visibility = VISIBLE
+                textViewLensName.visibility = VISIBLE
             } else {
                 mNumberTakenImages = 0
 
-                mIsShootingStarted = mDMDCapture!!.startShooting(getExternalFilesDir(DIRECTORY_PICTURES).toString())
+                mIsShootingStarted =
+                    mDMDCapture!!.startShooting(getExternalFilesDir(DIRECTORY_PICTURES).toString())
 
                 if (mIsShootingStarted) {
-                    imgRotMode?.visibility = INVISIBLE
-                    txtLensName?.visibility = INVISIBLE
+                    imageViewRotator.visibility = INVISIBLE
+                    textViewLensName.visibility = INVISIBLE
                 } else {
-                    imgRotMode?.visibility = VISIBLE
-                    txtLensName?.visibility = VISIBLE
+                    imageViewRotator.visibility = VISIBLE
+                    textViewLensName.visibility = VISIBLE
                 }
             }
         })
+
+        relativeLayout.addView(mViewGroup, 0)
     }
 
-    private fun drawCircle(_resId: Int) {
-        val relMain = findViewById<RelativeLayout>(R.id.relativeLayout)
+    private fun drawCircle(_resId: Int) = runOnUiThread {
+        val dim = IntArray(2)
 
-        val dm = DisplayMetrics()
-        windowManager.defaultDisplay.getMetrics(dm)
+        mViewGroup?.apply {
+            getLocationInWindow(dim)
+            activityW = width.toFloat()
+            activityH = height.toFloat()
+        }
 
-        val topOffset = dm.heightPixels - relMain.measuredHeight
+        Log.e(TAG, "drawCircle(), dim:" + dim[0] + " " + dim[1])
 
-        val position = IntArray(2)
-        viewGroup?.getLocationOnScreen(position)
+        val circleValues = Core.getCircleData(activityW, activityH, 0, dim[0], FL)
 
-        val y = position[1] - topOffset
+        val circleDiameter = circleValues[4]
 
-        runOnUiThread {
-            val dim = IntArray(2)
-            val dim2 = IntArray(2)
+        val marginTop = (circleValues[0] + dim[1]).roundToInt()
+        val marginRight = circleValues[1].roundToInt()
+        val marginBottom = circleValues[2].roundToInt()
+        val marginLeft = circleValues[3].roundToInt()
 
-            viewGroup?.apply {
-                getLocationInWindow(dim)
-                getLocationOnScreen(dim2)
-                activityW = width.toFloat()
-                activityH = height.toFloat()
+        Log.e(TAG, "drawCircle(), mars: $marginLeft $marginRight $marginTop $marginBottom")
+
+        imageViewCircle.apply {
+            setImageResource(_resId)
+            layoutParams = RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
+                leftMargin = -marginLeft
+                rightMargin = -marginRight
+                topMargin = marginTop
+                bottomMargin = -marginBottom
+                width = circleDiameter.roundToInt()
+                height = circleDiameter.roundToInt()
             }
-
-            Log.e(TAG, "drawCircle(), dim:" + dim[0] + " " + dim[1])
-
-            val marginLeft: Int
-            val marginRight: Int
-            val marginTop: Int
-            val marginBottom: Int
-            val circlediameter: Float
-            val circleValues: FloatArray
-
-            circleValues = Core.getCircleData(activityW, activityH, 0, dim[0], FL)
-
-            marginTop = Math.round(circleValues[0] + dim[1])
-            marginRight = Math.round(circleValues[1])
-            marginBottom = Math.round(circleValues[2])
-            marginLeft = Math.round(circleValues[3])
-
-            circlediameter = circleValues[4]
-
-            Log.e(TAG, "drawCircle(), mars: $marginLeft $marginRight $marginTop $marginBottom")
-
-            circle?.apply {
-                setImageResource(_resId)
-                layoutParams = RelativeLayout.LayoutParams(WRAP_CONTENT, WRAP_CONTENT).apply {
-                    leftMargin = -marginLeft //-margin; -marginLeft;
-                    rightMargin = -marginRight //-margin; -marginRight;
-                    topMargin = marginTop
-                    bottomMargin = -marginBottom
-                    width = Math.round(circlediameter)
-                    height = Math.round(circlediameter)
-                }
-                visibility = VISIBLE
-            }
+            visibility = VISIBLE
         }
     }
 
@@ -665,15 +592,13 @@ class PanoShooterActivity : AppCompatActivity() {
         override fun onFinishRelease() {
             Log.e(TAG, "onFinishRelease(), isRequestExit = $isRequestExit")
 
-            mRelativeLayout?.removeView(viewGroup)
-            viewGroup = null
+            relativeLayout.removeView(mViewGroup)
+            mViewGroup = null
 
             if (isRequestExit) {
                 finish()
                 return
             }
-
-            mDMDCapture?.startCamera(this@PanoShooterActivity, mWidth, mHeight)
         }
 
         override fun onDirectionUpdated(a: Float) {}
@@ -704,22 +629,7 @@ class PanoShooterActivity : AppCompatActivity() {
                 Log.e(TAG, "info.entry = $entry")
             }
 
-            val op = BitmapFactory.Options()
-            op.inPreferredConfig = Bitmap.Config.ARGB_8888
-            val bmp = BitmapFactory.decodeResource(resources, R.drawable.logo, op)
-            val bytes = DMDBitmapToRGBA888.imageToRGBA8888(bmp)
-            val min_zenith = 45f //specifies the size of the top logo between 0..90 degrees, otherwise it is set to 0
-            val min_nadir = 45f //specifies the size of the bottom logo between 0..90 degrees, otherwise it is set to 0
-
             mDMDCapture?.apply {
-                // для использоваия собственного лого
-                // val res = setLogo(bytes, min_zenith, min_nadir)
-
-                // to use  default logo (DMD logo).
-                Log.e(TAG, "stitchingCompleted() -> setLogo()")
-                val res = setLogo(null, min_zenith, min_nadir)
-                Log.e(TAG, "stitchingCompleted(), setLogo() finished, res = $res")
-
                 Log.e(TAG, "stitchingCompleted() -> genEquiAt()")
                 genEquiAt(panoFilePath, 800, 0, 0, false, false)
             }
@@ -728,6 +638,7 @@ class PanoShooterActivity : AppCompatActivity() {
         override fun shootingCompleted(finished: Boolean) {
             Log.e(TAG, "shootingCompleted(), finished = $finished")
             if (finished) {
+                Log.e(TAG, "shootingCompleted() -> stopCamera()")
                 mDMDCapture?.stopCamera()
             }
             mIsShootingStarted = false
@@ -757,26 +668,23 @@ class PanoShooterActivity : AppCompatActivity() {
 
             mIsShootingStarted = false
             isRequestExit = true
-            isRequestViewer = false
             mDMDCapture?.releaseShooter()
         }
 
-        override fun onExposureChanged(mode: ExposureMode) {
-            // TODO Auto-generated method stub
-        }
+        override fun onExposureChanged(mode: ExposureMode) {  }
 
         //rotator
         override fun onRotatorConnected() {
             Log.e(TAG, "onRotatorConnected()")
             runOnUiThread {
-                imgRotMode?.setImageResource(R.drawable.rotator_conn)
+                imageViewRotator.setImageResource(R.drawable.rotator_conn)
             }
         }
 
         override fun onRotatorDisconnected() {
             Log.e(TAG, "onRotatorDisconnected()")
             runOnUiThread {
-                if (isSDKRotator) imgRotMode?.setImageResource(R.drawable.rotator_disconn)
+                if (isSDKRotator) imageViewRotator.setImageResource(R.drawable.rotator_disconn)
             }
         }
 
@@ -787,8 +695,12 @@ class PanoShooterActivity : AppCompatActivity() {
     private fun setInstructionMessage(msgID: Int) {
         if (mCurrentInstructionMessageID == msgID) return
         runOnUiThread {
-            mTextViewInstruction?.setText(msgID)
+            textViewInstruction.setText(msgID)
             mCurrentInstructionMessageID = msgID
         }
+    }
+
+    private fun toastMessage(msg: String) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 }

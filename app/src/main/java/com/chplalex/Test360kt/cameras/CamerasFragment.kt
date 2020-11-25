@@ -18,6 +18,8 @@ import com.chplalex.Test360kt.R
 import com.chplalex.Test360kt.*
 import com.chplalex.Test360kt.cameras.PanoShooterActivity.Companion.PANO_SHOOTER_RESULT_PATH
 import com.chplalex.Test360kt.cameras.save.ShooterActivity_save
+import com.chplalex.Test360kt.galleries.PanoramaActivity
+import com.chplalex.Test360kt.galleries.SourceData
 import com.chplalex.Test360kt.utils.TAG
 
 private const val CAMERA_REQUEST = 4747
@@ -85,7 +87,9 @@ class CamerasFragment : Fragment() {
         val file = createImageFile(requireContext())
         val uri = Uri.fromFile(file)
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-        activity.startActivityForResult(takePictureIntent, REQUEST_CODE_CAMERA)
+        //TODO: временное решение
+        startActivityForResult(takePictureIntent, REQUEST_CODE_CAMERA)
+        //activity.startActivityForResult(takePictureIntent, REQUEST_CODE_CAMERA)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -102,7 +106,7 @@ class CamerasFragment : Fragment() {
                 Log.d(TAG, "Панорама сохранена. Uri = $panoramaUri")
                 val panoramaPath = this.getStringExtra(PANO_SHOOTER_RESULT_PATH)
                 Log.d(TAG, "Панорама сохранена. Path = $panoramaPath")
-                //context?.let { PanoramaActivity.start(it, SourceData("Свежее фото", mEquiPath)) }
+                context?.let { PanoramaActivity.start(it, SourceData("Свежее фото", panoramaPath)) }
             }
         }
     }

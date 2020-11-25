@@ -24,7 +24,6 @@ import android.view.*
 import android.view.View.*
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
