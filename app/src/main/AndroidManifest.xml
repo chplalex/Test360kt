@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.chplalex.Test360kt">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -43,7 +45,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Test360kt"
         android:hardwareAccelerated="true"
-        android:largeHeap="true">
+        android:largeHeap="true"
+        tools:ignore="GoogleAppIndexingWarning">
 
         <activity
             android:name=".main.MainActivity"
@@ -51,6 +54,7 @@
             android:theme="@style/Theme.Test360kt">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -67,12 +71,14 @@
         <activity android:name=".cameras.save.ShooterActivity_save"
             android:label="@string/title_activity_shooter_save"
             android:theme="@style/Theme.Test360kt.NoTitle"
-            android:configChanges="orientation"/>
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
 
         <activity android:name=".cameras.PanoShooterActivity"
             android:label="@string/title_activity_shooter"
             android:theme="@style/Theme.Test360kt.NoTitle"
-            android:configChanges="orientation"/>
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".cameras.LensesActivity"

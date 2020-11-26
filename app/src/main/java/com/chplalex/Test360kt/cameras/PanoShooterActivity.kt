@@ -142,7 +142,7 @@ class PanoShooterActivity : AppCompatActivity() {
         Log.d(TAG, "onRequestPermissionsResult() permissions checking")
 
         if (checkPermissionsAll()) {
-            Log.d(TAG, "onRequestPermissionsResult() permissions OK")
+            Log.d(TAG, "onRequestPermissionsResult() permissions OK -> onCreateSub()")
             onCreateSub()
             return
         }
