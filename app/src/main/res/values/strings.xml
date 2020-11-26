@@ -17,7 +17,7 @@
     <string name="label_gallery_internet">Галерея 360 из интернета</string>
     <string name="text_camera_simple">вызов внешней камеры\nв "ПРОСТОМ" режиме\nACTION_IMAGE_CAPTURE</string>
     <string name="text_camera_full">вызов внешней камеры\nв "ПОЛНОМ" режиме\nINTENT_ACTION_STILL_IMAGE_CAMERA</string>
-    <string name="text_camera_panorama_sdk">вызов камеры\nPANORAMA SDK</string>
+    <string name="text_camera_panorama_sdk">вызов CUSTOM камеры\nPANORAMA SDK</string>
 
     <string name="hold_the_device_vertically">Выровняйте устройство</string>
     <string name="rotate_left_or_right_or_tap_to_restart">Вращайте влево или вправо или коснитесь для рестарта</string>
@@ -38,7 +38,6 @@
     <string name="instruction_finish_left">Tap to finish when ready or continue rotating left</string>
     <string name="instruction_empty" />
     <string name="text_saving">Saving</string>
-    <string name="empty"></string>
     <string name="info_step1">Hold the device vertically and tap the screen to take first picture</string>
     <string name="info_step2">Turn the device until yin &amp; yang symbols meet, next picture is taken automatically</string>
     <string name="info_step3">When done, tap the screen or hold the device in landscape mode</string>
@@ -52,6 +51,7 @@
     <string name="discard_quest">Are you sure ?</string>
     <string name="discard_conf">Discard and Delete</string>
     <string name="check_faq">Check the FAQ</string>
+    <string name="empty" />
 
     <string name="wb">White Balance</string>
     <string name="wb_locked_start">Locked On Start</string>
@@ -87,7 +87,7 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="label_gallery_pano">Галерея 360 на устройстве</string>
-    <string name="text_camera_panorama_sdk_save">вызов SAVE камеры\nPANORAMA SDK</string>
+    <string name="text_camera_panorama_sdk_save">вызов ORIGINAL камеры\nPANORAMA SDK</string>
     <string name="no_lenses">Линз нет</string>
     <string name="cont_descr_image_view_circle">Image View Circle</string>
     <string name="cont_descr_image_view_rotator">Image View Rotator</string>

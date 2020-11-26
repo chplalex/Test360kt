@@ -2,7 +2,6 @@ package com.chplalex.Test360kt.cameras
 
 import android.Manifest.permission.*
 import android.app.AlertDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager.PERMISSION_GRANTED
@@ -32,26 +31,14 @@ import com.dermandar.dmd_lib.DMD_Capture.ExposureMode
 import com.nativesystem.Core
 import kotlinx.android.synthetic.main.activity_lenses.view.*
 import kotlinx.android.synthetic.main.activity_shooter.*
+import java.io.File
 import java.util.*
 import kotlin.math.roundToInt
 
 class PanoShooterActivity : AppCompatActivity() {
 
     companion object {
-        fun start(context: Context, mResultUri: Uri) =
-            Intent(context, PanoShooterActivity::class.java).apply {
-                putExtra(MediaStore.EXTRA_OUTPUT, mResultUri)
-                context.startActivity(this)
-            }
-
-        const val PANO_SHOOTER_RESULT_PATH = "PANO_SHOOTER_RESULT_PATH"
-
-        //Permissions
-        private const val MY_PERMISSIONS_REQUEST_LOCATION = 1
-        private const val MY_PERMISSIONS_REQUEST_CAMERA = 2
-        private const val MY_PERMISSIONS_REQUEST_STORAGE = 3
-
-        private var isLocationAsked = false
+        const val PANO_SHOOTER_RESULT_URI_KEY = "PANO_SHOOTER_RESULT_PATH_KEY"
     }
 
     internal enum class DetectResult {
@@ -60,6 +47,11 @@ class PanoShooterActivity : AppCompatActivity() {
         DMDCircleDetectionBad,
         DMDCircleDetectionGood
     }
+
+    //Permissions
+    private val MY_PERMISSIONS_REQUEST_LOCATION = 1
+    private val MY_PERMISSIONS_REQUEST_CAMERA = 2
+    private val MY_PERMISSIONS_REQUEST_STORAGE = 3
 
     // The main properties
     private lateinit var mDMDCapture: DMD_Capture
@@ -73,7 +65,7 @@ class PanoShooterActivity : AppCompatActivity() {
     // Status flags
     private var isShootingStarted = false
     private var isCameraReady = false
-    private var isRequestExit = false
+    private var isLocationAsked = false
 
     // Status variables
     private var mNumberTakenImages = 0
@@ -129,7 +121,6 @@ class PanoShooterActivity : AppCompatActivity() {
     }
 
     // Проверяем наличие необходимых разрешений
-    // TODO проверить, всё ли из этого нам действительно необходимо
     private fun checkPermissionsAll() =
         if (SDK_INT < M)
             true
@@ -335,8 +326,7 @@ class PanoShooterActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
-        Log.d(TAG, "onDestroy() -> releaseShooter()")
-        mDMDCapture.releaseShooter()
+        Log.d(TAG, "onDestroy()")
         super.onDestroy()
     }
 
@@ -364,7 +354,6 @@ class PanoShooterActivity : AppCompatActivity() {
             mDMDCapture.stopShooting()
             isShootingStarted = false
         } else {
-            isRequestExit = true
             Log.d(TAG, "onBackPressed() -> releaseShooter()")
             mDMDCapture.releaseShooter()
         }
@@ -464,15 +453,9 @@ class PanoShooterActivity : AppCompatActivity() {
         }
 
         override fun onFinishRelease() {
-            Log.d(TAG, "onFinishRelease(), isRequestExit = $isRequestExit")
-
             relativeLayout.removeView(mViewGroup)
-
-            if (isRequestExit) {
-                Log.d(TAG, "onFinishRelease() -> finish()")
-                finish()
-                return
-            }
+            Log.d(TAG, "onFinishRelease() -> finish()")
+            finish()
         }
 
         override fun onDirectionUpdated(a: Float) {}
@@ -485,22 +468,11 @@ class PanoShooterActivity : AppCompatActivity() {
 
             Log.d(TAG, "photoTaken(), mNumberTakenImages = $mNumberTakenImages")
 
-            when(mNumberTakenImages) {
+            when (mNumberTakenImages) {
                 0 -> setInstructionMessage(R.string.tap_anywhere_to_start)
                 1 -> setInstructionMessage(R.string.rotate_left_or_right_or_tap_to_restart)
                 else -> setInstructionMessage(R.string.tap_to_finish_when_ready_or_continue_rotating)
             }
-        }
-
-        override fun stitchingCompleted(info: HashMap<String, Any>) {
-            Log.d(TAG, "stitchingCompleted()")
-            for (entry in info) {
-                Log.d(TAG, "info.entry = $entry")
-            }
-            Log.d(TAG, "stitchingCompleted() -> genEquiAt()")
-            mDMDCapture.genEquiAt(mResultPath, 800, 0, 0, false, false)
-            Log.d(TAG, "stitchingCompleted() -> releaseShooter()")
-            mDMDCapture.releaseShooter()
         }
 
         override fun shootingCompleted(finished: Boolean) {
@@ -510,6 +482,15 @@ class PanoShooterActivity : AppCompatActivity() {
                 mDMDCapture.stopCamera()
             }
             isShootingStarted = false
+        }
+
+        override fun stitchingCompleted(info: HashMap<String, Any>) {
+            Log.d(TAG, "stitchingCompleted()")
+            for (entry in info) {
+                Log.d(TAG, "info.entry = $entry")
+            }
+            Log.d(TAG, "stitchingCompleted() -> genEquiAt(), mResultPath = $mResultPath")
+            mDMDCapture.genEquiAt(mResultPath, 800, 0, 0, false, false)
         }
 
         override fun deviceVerticalityChanged(isVertical: Int) {
@@ -531,12 +512,14 @@ class PanoShooterActivity : AppCompatActivity() {
         override fun onFinishGeneratingEqui() {
             Log.d(TAG, "onFinishGeneratingEqui(), mResultPath = $mResultPath")
 
-            val mResultIntent =
-                Intent().apply { putExtra(PANO_SHOOTER_RESULT_PATH, mResultPath) }
+            val mResultUri = Uri.fromFile(File(mResultPath))
+            val mResultIntent = Intent().apply { putExtra(PANO_SHOOTER_RESULT_URI_KEY, mResultUri) }
             setResult(RESULT_OK, mResultIntent)
 
             isShootingStarted = false
-            isRequestExit = true
+
+            Log.d(TAG, "onFinishGeneratingEqui() -> releaseShooting()")
+            mDMDCapture.releaseShooter()
         }
 
         override fun onExposureChanged(mode: ExposureMode) {}

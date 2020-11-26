@@ -16,7 +16,7 @@ import android.widget.Toast
 import androidx.fragment.app.FragmentActivity
 import com.chplalex.Test360kt.R
 import com.chplalex.Test360kt.*
-import com.chplalex.Test360kt.cameras.PanoShooterActivity.Companion.PANO_SHOOTER_RESULT_PATH
+import com.chplalex.Test360kt.cameras.PanoShooterActivity.Companion.PANO_SHOOTER_RESULT_URI_KEY
 import com.chplalex.Test360kt.cameras.save.ShooterActivity_save
 import com.chplalex.Test360kt.galleries.PanoramaActivity
 import com.chplalex.Test360kt.galleries.SourceData
@@ -87,26 +87,26 @@ class CamerasFragment : Fragment() {
         val file = createImageFile(requireContext())
         val uri = Uri.fromFile(file)
         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-        //TODO: временное решение
         startActivityForResult(takePictureIntent, REQUEST_CODE_CAMERA)
-        //activity.startActivityForResult(takePictureIntent, REQUEST_CODE_CAMERA)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        Log.e(TAG, "onActivityResult(), requestCode = $requestCode, resultCode = $resultCode, data = $data")
+        Log.d(TAG, "onActivityResult(), requestCode = $requestCode, resultCode = $resultCode, data = $data")
 
         super.onActivityResult(requestCode, resultCode, data)
+
         if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
             val imageBitmap = data?.extras?.get("data") as Bitmap
-            Toast.makeText(context, "Отображение результата", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Отображение результата (заглушка)", Toast.LENGTH_LONG).show()
         }
+
         if (requestCode == REQUEST_CODE_CAMERA && resultCode == RESULT_OK) {
             data?.apply {
-                val panoramaUri = this.data
-                Log.d(TAG, "Панорама сохранена. Uri = $panoramaUri")
-                val panoramaPath = this.getStringExtra(PANO_SHOOTER_RESULT_PATH)
-                Log.d(TAG, "Панорама сохранена. Path = $panoramaPath")
-                context?.let { PanoramaActivity.start(it, SourceData("Свежее фото", panoramaPath)) }
+                val panoramaUri: Uri? = getParcelableExtra(PANO_SHOOTER_RESULT_URI_KEY)
+                panoramaUri?.let { uri ->
+                    Log.d(TAG, "Панорама сохранена. Path = ${uri.path}")
+                    context?.let { PanoramaActivity.start(it, SourceData("Свежее фото", uri.path)) }
+                }
             }
         }
     }
