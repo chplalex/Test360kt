@@ -18,6 +18,7 @@
     <string name="text_camera_simple">вызов внешней камеры\nв "ПРОСТОМ" режиме\nACTION_IMAGE_CAPTURE</string>
     <string name="text_camera_full">вызов внешней камеры\nв "ПОЛНОМ" режиме\nINTENT_ACTION_STILL_IMAGE_CAMERA</string>
     <string name="text_camera_panorama_sdk">вызов CUSTOM камеры\nPANORAMA SDK</string>
+    <string name="text_camera_pano">сделать панораму</string>
 
     <string name="hold_the_device_vertically">Выровняйте устройство</string>
     <string name="rotate_left_or_right_or_tap_to_restart">Вращайте влево или вправо или коснитесь для рестарта</string>

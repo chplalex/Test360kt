@@ -65,7 +65,7 @@ class PanoShooterActivity : AppCompatActivity() {
     // Status flags
     private var isShootingStarted = false
     private var isCameraReady = false
-    private var isLocationAsked = false
+    //private var isLocationAsked = false
 
     // Status variables
     private var mNumberTakenImages = 0
@@ -114,10 +114,10 @@ class PanoShooterActivity : AppCompatActivity() {
             return
         }
 
-        if (!checkPermissionsLocation()) {
-            requestPermissionsLocation()
-            return
-        }
+//        if (!checkPermissionsLocation()) {
+//            requestPermissionsLocation()
+//            return
+//        }
     }
 
     // Проверяем наличие необходимых разрешений
@@ -125,7 +125,8 @@ class PanoShooterActivity : AppCompatActivity() {
         if (SDK_INT < M)
             true
         else
-            checkPermissionsCamera() && checkPermissionsStorage() && checkPermissionsLocation()
+            //checkPermissionsCamera() && checkPermissionsStorage() && checkPermissionsLocation()
+            checkPermissionsCamera() && checkPermissionsStorage()
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -167,15 +168,15 @@ class PanoShooterActivity : AppCompatActivity() {
             }
         }
 
-        if (!checkPermissionsLocation()) {
-            if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
-                toastMessage("Can't working without location permissions")
-                finish()
-            } else {
-                requestPermissionsLocation()
-                return
-            }
-        }
+//        if (!checkPermissionsLocation()) {
+//            if (requestCode == MY_PERMISSIONS_REQUEST_LOCATION) {
+//                toastMessage("Can't working without location permissions")
+//                finish()
+//            } else {
+//                requestPermissionsLocation()
+//                return
+//            }
+//        }
     }
 
     @RequiresApi(M)
@@ -186,10 +187,10 @@ class PanoShooterActivity : AppCompatActivity() {
         (checkSelfPermission(READ_EXTERNAL_STORAGE) == PERMISSION_GRANTED) &&
                 (checkSelfPermission(WRITE_EXTERNAL_STORAGE) == PERMISSION_GRANTED)
 
-    @RequiresApi(M)
-    private fun checkPermissionsLocation() =
-        (checkSelfPermission(ACCESS_FINE_LOCATION) == PERMISSION_GRANTED &&
-                checkSelfPermission(ACCESS_COARSE_LOCATION) == PERMISSION_GRANTED)
+//    @RequiresApi(M)
+//    private fun checkPermissionsLocation() =
+//        (checkSelfPermission(ACCESS_FINE_LOCATION) == PERMISSION_GRANTED &&
+//                checkSelfPermission(ACCESS_COARSE_LOCATION) == PERMISSION_GRANTED)
 
     @RequiresApi(M)
     private fun requestPermissionsCamera() = requestPermissions(
@@ -203,17 +204,17 @@ class PanoShooterActivity : AppCompatActivity() {
         MY_PERMISSIONS_REQUEST_STORAGE
     )
 
-    @RequiresApi(M)
-    private fun requestPermissionsLocation() = requestPermissions(
-        arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
-        MY_PERMISSIONS_REQUEST_LOCATION
-    )
+//    @RequiresApi(M)
+//    private fun requestPermissionsLocation() = requestPermissions(
+//        arrayOf(ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION),
+//        MY_PERMISSIONS_REQUEST_LOCATION
+//    )
 
     // необходимые права имеются. работаем дальше.
     private fun onCreateSub() {
         Log.d(TAG, "onCreateSub()")
 
-        initLocationMode()
+        //initLocationMode()
         initRequestedOrientation()
         setContentView(R.layout.activity_shooter)
         initDimensions()
@@ -222,40 +223,40 @@ class PanoShooterActivity : AppCompatActivity() {
         setInstructionMessage(R.string.tap_anywhere_to_start)
     }
 
-    private fun initLocationMode() {
-        //validate location on
-        if (!isLocationAsked) {
-            val lm = getSystemService(LOCATION_SERVICE) as LocationManager
-            var gpsEnabled = false
-            var networkEnabled = false
-
-            try {
-                gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
-            } catch (ex: Exception) {
-                toastMessage("GPS locating isn't enabled")
-            }
-
-            try {
-                networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-            } catch (ex: Exception) {
-                toastMessage("Network locating isn't enabled")
-            }
-
-            if (!gpsEnabled && !networkEnabled) {
-                // notify user
-                AlertDialog.Builder(this)
-                    .setMessage("Your GPS is turned off, you may need to turn it on to connect to the Bluetooth rotator")
-                    .setPositiveButton("Open Location Setting") { _, _ ->
-                        startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
-                    }
-                    .setNegativeButton("Ignore") { _, _ ->
-                    }
-                    .show()
-                isLocationAsked = true
-            }
-        }
-        //end validate location on
-    }
+//    private fun initLocationMode() {
+//        //validate location on
+//        if (!isLocationAsked) {
+//            val lm = getSystemService(LOCATION_SERVICE) as LocationManager
+//            var gpsEnabled = false
+//            var networkEnabled = false
+//
+//            try {
+//                gpsEnabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER)
+//            } catch (ex: Exception) {
+//                toastMessage("GPS locating isn't enabled")
+//            }
+//
+//            try {
+//                networkEnabled = lm.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+//            } catch (ex: Exception) {
+//                toastMessage("Network locating isn't enabled")
+//            }
+//
+//            if (!gpsEnabled && !networkEnabled) {
+//                // notify user
+//                AlertDialog.Builder(this)
+//                    .setMessage("Your GPS is turned off, you may need to turn it on to connect to the Bluetooth rotator")
+//                    .setPositiveButton("Open Location Setting") { _, _ ->
+//                        startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS))
+//                    }
+//                    .setNegativeButton("Ignore") { _, _ ->
+//                    }
+//                    .show()
+//                isLocationAsked = true
+//            }
+//        }
+//        //end validate location on
+//    }
 
     private fun initRequestedOrientation() {
         val mScreenWidth: Int
