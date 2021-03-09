@@ -12,28 +12,28 @@ import com.bumptech.glide.request.transition.Transition
 import com.chplalex.Test360kt.R
 import com.google.vr.sdk.widgets.pano.VrPanoramaView
 import com.google.vr.sdk.widgets.pano.VrPanoramaView.Options.TYPE_MONO
-import kotlinx.android.synthetic.main.activity_panorama.*
+import kotlinx.android.synthetic.main.activity_vr_panorama_view.*
 
-class PanoramaActivity : AppCompatActivity() {
+class VrPanoramaViewActivity : AppCompatActivity() {
 
     companion object {
-        private val PANORAMA_ACTIVITY_KEY = PanoramaActivity::class.java.name + "_KEY"
+        private val VR_PANORAMA_VIEW_ACTIVITY_KEY = VrPanoramaViewActivity::class.java.name + "_KEY"
 
         fun start(context: Context, sourceData: SourceData) =
-            Intent(context, PanoramaActivity::class.java).apply {
-                putExtra(PANORAMA_ACTIVITY_KEY, sourceData)
+            Intent(context, VrPanoramaViewActivity::class.java).apply {
+                putExtra(VR_PANORAMA_VIEW_ACTIVITY_KEY, sourceData)
                 context.startActivity(this)
             }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_panorama)
+        setContentView(R.layout.activity_vr_panorama_view)
 
         scrollingByGesture.setOnCheckedChangeListener { buttonView, isChecked -> vrPanoramaView.setPureTouchTracking(isChecked) }
         scrollingByGiro.setOnCheckedChangeListener { buttonView, isChecked -> vrPanoramaView.setPureTouchTracking(!isChecked) }
 
-        val sourceData = intent.getParcelableExtra<SourceData>(PANORAMA_ACTIVITY_KEY)
+        val sourceData = intent.getParcelableExtra<SourceData>(VR_PANORAMA_VIEW_ACTIVITY_KEY)
         if (sourceData != null) {
             supportActionBar?.title = sourceData.title
             val options = VrPanoramaView.Options().also { it.inputType = TYPE_MONO }

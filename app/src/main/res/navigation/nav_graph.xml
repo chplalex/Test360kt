@@ -30,9 +30,9 @@
         tools:layout="@layout/activity_image"/>
     <activity
         android:id="@+id/panoramaActivity"
-        android:name="com.chplalex.Test360kt.galleries.PanoramaActivity"
+        android:name="com.chplalex.Test360kt.galleries.VrPanoramaViewActivity"
         android:label="PanoramaActivity"
-        tools:layout="@layout/activity_panorama"/>
+        tools:layout="@layout/activity_vr_panorama_view"/>
     <activity
         android:id="@+id/shooterActivity"
         android:name="com.chplalex.Test360kt.cameras.PanoShooterActivity"

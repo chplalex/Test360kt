@@ -30,7 +30,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.chplalex.Test360kt.R
 import com.chplalex.Test360kt.cameras.DMDBitmapToRGBA888
 import com.chplalex.Test360kt.cameras.LensesActivity
-import com.chplalex.Test360kt.galleries.PanoramaActivity
+import com.chplalex.Test360kt.galleries.VrPanoramaViewActivity
 import com.chplalex.Test360kt.galleries.SourceData
 import com.chplalex.Test360kt.utils.TAG
 import com.dermandar.dmd_lib.CallbackInterfaceShooter
@@ -804,7 +804,7 @@ class ShooterActivity_save : AppCompatActivity() {
 
             //mDMDCapture!!.startCamera(applicationContext, mWidth, mHeight)
             Toast.makeText(this@ShooterActivity_save, "Image saved to $mEquiPath", Toast.LENGTH_LONG).show()
-            PanoramaActivity.start(this@ShooterActivity_save, SourceData("Свежее фото", mEquiPath))
+            VrPanoramaViewActivity.start(this@ShooterActivity_save, SourceData("Свежее фото", mEquiPath))
 
             //isRequestExit = true;
             //isRequestViewer = true;

@@ -64,7 +64,11 @@
             android:label="@string/title_activity_image"
             android:theme="@style/Theme.Test360kt"/>
 
-        <activity android:name=".galleries.PanoramaActivity"
+        <activity android:name=".galleries.VrPanoramaViewActivity"
+            android:label="@string/title_activity_panorama"
+            android:theme="@style/Theme.Test360kt"/>
+
+        <activity android:name=".galleries.DMDViewerActivity"
             android:label="@string/title_activity_panorama"
             android:theme="@style/Theme.Test360kt"/>
 

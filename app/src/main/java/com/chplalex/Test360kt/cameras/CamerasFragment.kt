@@ -18,7 +18,7 @@ import com.chplalex.Test360kt.R
 import com.chplalex.Test360kt.*
 import com.chplalex.Test360kt.cameras.PanoShooterActivity.Companion.PANO_SHOOTER_RESULT_URI_KEY
 import com.chplalex.Test360kt.cameras.save.ShooterActivity_save
-import com.chplalex.Test360kt.galleries.PanoramaActivity
+import com.chplalex.Test360kt.galleries.VrPanoramaViewActivity
 import com.chplalex.Test360kt.galleries.SourceData
 import com.chplalex.Test360kt.utils.TAG
 
@@ -105,7 +105,7 @@ class CamerasFragment : Fragment() {
                 val panoramaUri: Uri? = getParcelableExtra(PANO_SHOOTER_RESULT_URI_KEY)
                 panoramaUri?.let { uri ->
                     Log.d(TAG, "Панорама сохранена. Path = ${uri.path}")
-                    context?.let { PanoramaActivity.start(it, SourceData("Свежее фото", uri.path)) }
+                    context?.let { VrPanoramaViewActivity.start(it, SourceData("Свежее фото", uri.path)) }
                 }
             }
         }

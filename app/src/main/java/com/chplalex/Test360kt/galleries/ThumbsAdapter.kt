@@ -16,7 +16,8 @@ class ThumbsAdapter(private val sourceList: List<SourceData>) :
         fun bind(sourceData: SourceData, position: Int) = with(sourceData) {
             with(itemView) {
                 txtTitle.text = title
-                imgThumb.setOnClickListener { PanoramaActivity.start(context, sourceData) }
+                //imgThumb.setOnClickListener { VrPanoramaViewActivity.start(context, sourceData) }
+                imgThumb.setOnClickListener { DMDViewerActivity.start(context, sourceData) }
                 Glide.with(context)
                     .load(url)
                     .circleCrop()
@@ -37,41 +38,4 @@ class ThumbsAdapter(private val sourceList: List<SourceData>) :
         )
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) = holder.bind(sourceList[position], position)
-
 }
-
-//private var vrPanoramaView: VrPanoramaView? = null
-//
-//override fun onCreate(savedInstanceState: Bundle?) {
-//    super.onCreate(savedInstanceState)
-//    setContentView(R.layout.activity_main)
-//
-//    val options = VrPanoramaView.Options().also { it.inputType = VrPanoramaView.Options.TYPE_MONO }
-//    vrPanoramaView = findViewById<VrPanoramaView>(R.id.vrPanoramaView)
-//    Glide
-//        .with(this)
-//        .asBitmap()
-//        .load("https://pixexid.com/img/mw194el-modern-bedroom-interior-design.jpeg")
-//        .into(object : CustomTarget<Bitmap>() {
-//            override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-//                vrPanoramaView?.loadImageFromBitmap(resource, options)
-//            }
-//
-//            override fun onLoadCleared(placeholder: Drawable?) {}
-//        })
-//}
-//
-//override fun onPause() {
-//    super.onPause()
-//    vrPanoramaView?.pauseRendering()
-//}
-//
-//override fun onResume() {
-//    super.onResume()
-//    vrPanoramaView?.resumeRendering()
-//}
-//
-//override fun onDestroy() {
-//    vrPanoramaView?.shutdown()
-//    super.onDestroy()
-//}
