@@ -1,32 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/txtTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="30sp"
         android:padding="5dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:textSize="30sp"
         app:layout_constraintBottom_toTopOf="@+id/imgThumb"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="Гостинная" />
 
     <ImageView
         android:id="@+id/imgThumb"
-        android:layout_width="250dp"
-        android:layout_height="250dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:padding="5dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtTitle"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtTitle"
         tools:srcCompat="@mipmap/ic_launcher" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnVrPanoramaView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="@string/view_by_vrpanoramaview"
+        app:layout_constraintBottom_toTopOf="@+id/btnDMDViewer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imgThumb" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnDMDViewer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:text="@string/view_by_dmdviewer"
+        app:layout_constraintBottom_toBottomOf="@id/imgThumb"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnVrPanoramaView" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

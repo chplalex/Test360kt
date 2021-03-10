@@ -17,7 +17,9 @@ class ThumbsAdapter(private val sourceList: List<SourceData>) :
             with(itemView) {
                 txtTitle.text = title
                 //imgThumb.setOnClickListener { VrPanoramaViewActivity.start(context, sourceData) }
-                imgThumb.setOnClickListener { DMDViewerActivity.start(context, sourceData) }
+                //imgThumb.setOnClickListener { DMDViewerActivity.start(context, sourceData) }
+                btnVrPanoramaView.setOnClickListener { VrPanoramaViewActivity.start(context, sourceData) }
+                btnDMDViewer.setOnClickListener { DMDViewerActivity.start(context, sourceData) }
                 Glide.with(context)
                     .load(url)
                     .circleCrop()

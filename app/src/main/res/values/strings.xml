@@ -92,5 +92,7 @@
     <string name="no_lenses">Линз нет</string>
     <string name="cont_descr_image_view_circle">Image View Circle</string>
     <string name="cont_descr_image_view_rotator">Image View Rotator</string>
+    <string name="view_by_vrpanoramaview">VrPanoramaView</string>
+    <string name="view_by_dmdviewer">DMDViewer</string>
 
 </resources>
