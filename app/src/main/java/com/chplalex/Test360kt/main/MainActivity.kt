@@ -16,20 +16,20 @@ class MainActivity : AppCompatActivity() {
 
         toolbar?.let{ setSupportActionBar(it) }
 
-        val navController = Navigation.findNavController(this, R.id.navHostFragment)
+        Navigation.findNavController(this, R.id.navHostFragment).apply {
+            NavigationUI.setupWithNavController(navigationView, this)
+        }
 
-        NavigationUI.setupWithNavController(navigationView, navController)
-
-        val toggle = ActionBarDrawerToggle(
+        ActionBarDrawerToggle(
             this,
             drawerLayout,
             toolbar,
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
-        )
-        drawerLayout.addDrawerListener(toggle)
-        toggle.isDrawerIndicatorEnabled = true
-        toggle.syncState()
+        ).apply {
+            drawerLayout.addDrawerListener(this)
+            isDrawerIndicatorEnabled = true
+            syncState()
+        }
     }
-
 }

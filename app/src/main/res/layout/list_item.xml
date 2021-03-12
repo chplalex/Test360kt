@@ -6,44 +6,27 @@
     android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/txtTitle"
-        android:layout_width="wrap_content"
+        android:id="@+id/text_view_source"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="5dp"
-        android:textSize="30sp"
-        app:layout_constraintBottom_toTopOf="@+id/imgThumb"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/image_view_thumbnail"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Гостинная" />
+        tools:text="https://pixexid.com/img/xl1n5ms-a-living-room-filled-with-furniture-and-a-fireplace.jpeg" />
 
     <ImageView
-        android:id="@+id/imgThumb"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
+        android:id="@+id/image_view_thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:padding="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtTitle"
-        tools:srcCompat="@mipmap/ic_launcher" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnVrPanoramaView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:text="@string/view_by_vrpanoramaview"
-        app:layout_constraintBottom_toTopOf="@+id/btnDMDViewer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/imgThumb" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnDMDViewer"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:text="@string/view_by_dmdviewer"
-        app:layout_constraintBottom_toBottomOf="@id/imgThumb"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnVrPanoramaView" />
+        app:layout_constraintTop_toBottomOf="@+id/text_view_source"
+        tools:srcCompat="@mipmap/ic_launcher"
+        android:contentDescription="@string/content_description_panorama_preview" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -94,5 +94,6 @@
     <string name="cont_descr_image_view_rotator">Image View Rotator</string>
     <string name="view_by_vrpanoramaview">VrPanoramaView</string>
     <string name="view_by_dmdviewer">DMDViewer</string>
+    <string name="content_description_panorama_preview">Panorama preview</string>
 
 </resources>
