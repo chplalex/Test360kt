@@ -18,15 +18,26 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="https://pixexid.com/img/xl1n5ms-a-living-room-filled-with-furniture-and-a-fireplace.jpeg" />
 
-    <ImageView
-        android:id="@+id/image_view_thumbnail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="5dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_view_source"
-        tools:srcCompat="@mipmap/ic_launcher"
-        android:contentDescription="@string/content_description_panorama_preview" />
+<!--    <ImageView-->
+<!--        android:id="@+id/image_view_thumbnail"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:padding="5dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/text_view_source"-->
+<!--        tools:srcCompat="@mipmap/ic_launcher"-->
+<!--        android:contentDescription="@string/content_description_panorama_preview" />-->
+
+        <RelativeLayout
+            android:id="@+id/image_view_thumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:padding="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/text_view_source"
+            android:contentDescription="@string/content_description_panorama_preview" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

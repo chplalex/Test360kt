@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="PanoView">
+        <attr name="fov" format="integer" />
+        <attr name="type" format="enum">
+            <enum name="cylindrical" value="0"/>
+            <enum name="spherical" value="1"/>
+        </attr>
+    </declare-styleable>
+</resources>

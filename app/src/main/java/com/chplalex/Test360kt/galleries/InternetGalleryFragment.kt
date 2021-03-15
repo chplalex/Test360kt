@@ -10,6 +10,8 @@ import com.chplalex.Test360kt.R
 import com.google.android.material.button.MaterialButton
 
 class InternetGalleryFragment : Fragment(R.layout.fragment_internet_gallery) {
+
+    private lateinit var adapter: ThumbsAdapter
 /*
     private val sourceList = listOf(
         SourceData(
@@ -48,47 +50,58 @@ class InternetGalleryFragment : Fragment(R.layout.fragment_internet_gallery) {
 */
 
     private val sourceList = listOf(
-        SourceData(
-            "Pano-01",
-            "https://cdn-p.cian.site/images/45/472/001/kvartira-moskva-6y-novopodmoskovnyy-pereulok-1002745491-1.jpg"
-        ),
-        SourceData(
-            "Pano-02",
-            "https://cdn-p.cian.site/images/45/472/001/kvartira-moskva-6y-novopodmoskovnyy-pereulok-1002745449-1.jpg"
-        ),
-        SourceData(
-            "Pano-03",
-            "https://cdn-p.cian.site/images/45/472/001/kvartira-moskva-6y-novopodmoskovnyy-pereulok-1002745499-1.jpg"
-        ),
-        SourceData(
-            "Pano-04",
-            "https://cdn-p.cian.site/images/55/472/001/kvartira-moskva-6y-novopodmoskovnyy-pereulok-1002745509-1.jpg"
-        ),
-        SourceData(
-            "Pano-05",
-            "https://cdn-p.cian.site/images/55/472/001/kvartira-moskva-6y-novopodmoskovnyy-pereulok-1002745515-1.jpg"
-        ),
-        SourceData(
-            "Pano-06",
-            "https://cdn-p.cian.site/images/55/472/001/kvartira-moskva-6y-novopodmoskovnyy-pereulok-1002745522-1.jpg"
-        ),
-        SourceData(
-            "Pano-07",
-            "https://cdn-p.cian.site/images/55/472/001/kvartira-moskva-6y-novopodmoskovnyy-pereulok-1002745536-1.jpg"
-        ),
+//        SourceData(
+//            "Pano-01",
+//            "https://cdn-p.cian.site/images/45/472/001/kvartira-moskva-6y-novopodmoskovnyy-pereulok-1002745491-1.jpg"
+//        ),
+//        SourceData(
+//            "Pano-02",
+//            "https://cdn-p.cian.site/images/45/472/001/kvartira-moskva-6y-novopodmoskovnyy-pereulok-1002745449-1.jpg"
+//        ),
+//        SourceData(
+//            "Pano-03",
+//            "https://cdn-p.cian.site/images/45/472/001/kvartira-moskva-6y-novopodmoskovnyy-pereulok-1002745499-1.jpg"
+//        ),
+//        SourceData(
+//            "Pano-04",
+//            "https://cdn-p.cian.site/images/55/472/001/kvartira-moskva-6y-novopodmoskovnyy-pereulok-1002745509-1.jpg"
+//        ),
+//        SourceData(
+//            "Pano-05",
+//            "https://cdn-p.cian.site/images/55/472/001/kvartira-moskva-6y-novopodmoskovnyy-pereulok-1002745515-1.jpg"
+//        ),
+//        SourceData(
+//            "Pano-06",
+//            "https://cdn-p.cian.site/images/55/472/001/kvartira-moskva-6y-novopodmoskovnyy-pereulok-1002745522-1.jpg"
+//        ),
+//        SourceData(
+//            "Pano-07",
+//            "https://cdn-p.cian.site/images/55/472/001/kvartira-moskva-6y-novopodmoskovnyy-pereulok-1002745536-1.jpg"
+//        ),
         SourceData(
             "Pano-08",
             "https://cdn-p.cian.site/images/55/472/001/kvartira-moskva-6y-novopodmoskovnyy-pereulok-1002745560-1.jpg"
         ),
-        SourceData(
-            "Pano-09",
-            "https://cdn-p.cian.site/images/58/183/401/kvartira-moskva-6y-novopodmoskovnyy-pereulok-1043818573-1.jpg"
-        )
+//        SourceData(
+//            "Pano-09",
+//            "https://cdn-p.cian.site/images/58/183/401/kvartira-moskva-6y-novopodmoskovnyy-pereulok-1043818573-1.jpg"
+//        )
     )
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         activity?.title = resources.getString(R.string.label_gallery_internet)
-        view.findViewById<RecyclerView>(R.id.rvThumbs)?.adapter = ThumbsAdapter(sourceList)
+        adapter = ThumbsAdapter(sourceList)
+        view.findViewById<RecyclerView>(R.id.rvThumbs)?.adapter = adapter
+    }
+
+    override fun onPause() {
+        super.onPause()
+        adapter.onPause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        adapter.onResume()
     }
 }
